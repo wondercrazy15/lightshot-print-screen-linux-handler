@@ -20,7 +20,7 @@ print_error_and_exit()
     is_number "$1" || print_error_and_exit 4 "print_error_and_exit(): The argument #1 is not a number!"
 
     # check if we have color support
-    if [ -x /usr/bin/tput ] && tput setaf 1 > /dev/null 2>&1
+    if test -x /usr/bin/tput && tput setaf 1 > /dev/null 2>&1
     then
         bold=$(tput bold)
         red=$(tput setaf 1)
