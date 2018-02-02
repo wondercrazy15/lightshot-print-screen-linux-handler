@@ -1,4 +1,4 @@
-# Lightshot Print Screen linux handler
+# Lightshot Print Screen key linux handler
 
 It is a POSIX shell script, it will most likely work on any distribution.
 
