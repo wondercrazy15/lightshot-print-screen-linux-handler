@@ -1,6 +1,6 @@
 # Lightshot Print Screen key linux handler
 
-It is a POSIX shell script, it will most likely work on any distribution.
+It is a standard POSIX shell script, it will most likely work on any distribution.
 
 The only pre-requisites are:
 
