@@ -1,0 +1,83 @@
+#!/bin/sh
+
+is_number()
+{
+    # check if exactly one argument has been passed
+    test "$#" -eq 1 || print_error_and_exit 5 "is_number(): There has not been passed exactly one argument!"
+
+    # check if the argument is an integer
+    test "$1" -eq "$1" 2>/dev/null
+}
+
+# ------------------------------------------------------------------------------
+
+print_error_and_exit()
+{
+    # check if exactly two arguments have been passed
+    test "$#" -eq 2 || print_error_and_exit 3 "print_error_and_exit(): There have not been passed exactly two arguments!"
+
+    # check if the first argument is a number
+    is_number "$1" || print_error_and_exit 4 "print_error_and_exit(): The argument #1 is not a number!"
+
+    # check if we have color support
+    if [ -x /usr/bin/tput ] && tput setaf 1 > /dev/null 2>&1
+    then
+        bold=$(tput bold)
+        red=$(tput setaf 1)
+        nocolor=$(tput sgr0)
+        echo "$bold$red$2 Exit code = $1.$nocolor" 1>&2
+    else
+        echo "$2 Exit code = $1." 1>&2
+    fi
+
+    exit "$1"
+}
+
+# ------------------------------------------------------------------------------
+
+check_for_prerequisite()
+{
+    # check if exactly one argument has been passed
+    test "$#" -eq 1 || print_error_and_exit 2 "check_for_prerequisite(): There has not been passed exactly one argument!"
+
+    # check if the argument is a program which is installed
+    command -v "$1" > /dev/null 2>&1 || print_error_and_exit 6 "check_for_prerequisite(): I require $1 but it's not installed :-("
+}
+
+# ------------------------------------------------------------------------------
+
+# check if no arguments have been passed to the script
+test "$#" -gt 0 && print_error_and_exit 1 "$0: You have passed some unexpected argument(s) to the script!"
+
+# ------------------------------------------------------------------------------
+
+# check for prerequisites
+check_for_prerequisite "pgrep"
+check_for_prerequisite "xdotool"
+
+# ------------------------------------------------------------------------------
+
+# global constants
+lightshot_key="Print"
+lightshot_name="Lightshot"
+
+# ------------------------------------------------------------------------------
+
+# get the lightshot pid
+lightshot_pid=$(pgrep "$lightshot_name")
+
+# test if a pid has been successfully acquired
+is_number "$lightshot_pid" || print_error_and_exit 7 "lightshot_pid: The argument is not a number!\\nLightshot is most probably not running."
+
+# ------------------------------------------------------------------------------
+
+# get the window id from lightshot pid
+lightshot_wnd=$(xdotool search --limit 1 --all --pid "$lightshot_pid" --name "$lightshot_name")
+
+# test if a window handler has been successfully acquired
+is_number "$lightshot_wnd" || print_error_and_exit 8 "lightshot_wnd: The argument is not a number!\\nLightshot is most probably not running."
+
+# ------------------------------------------------------------------------------
+
+# simulate a print screen key press on the lightshot window
+xdotool key --window "$lightshot_wnd" "$lightshot_key"
