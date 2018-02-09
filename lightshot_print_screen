@@ -1,15 +1,27 @@
 #!/bin/sh
 
+# treat unset variables as an error when substituting
+set -o nounset
+
+# global constants for an easy set-up:
+    # lightshot_printscreen_hotkey: set this to the same hotkey which you have set up in Lightshot
+    #                               example: for left control and print screen key -> type Control_L+Print
+lightshot_printscreen_hotkey="Print"
+    # lightshot_process_name: do not change this one, it is a case-sensitive name of the Lightshot process
+lightshot_process_name="Lightshot"
+
+#------------------------------------------------------------------------------
+
 is_number()
 {
     # check if exactly one argument has been passed
     test "$#" -eq 1 || print_error_and_exit 5 "is_number(): There has not been passed exactly one argument!"
 
     # check if the argument is an integer
-    test "$1" -eq "$1" 2>/dev/null
+    test "$1" -eq "$1" 2> /dev/null
 }
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 print_error_and_exit()
 {
@@ -25,15 +37,15 @@ print_error_and_exit()
         bold=$(tput bold)
         red=$(tput setaf 1)
         nocolor=$(tput sgr0)
-        echo "$bold$red$2 Exit code = $1.$nocolor" 1>&2
+        printf "%s%s%s Exit code = %s.%s\\n" "$bold" "$red" "$2" "$1" "$nocolor" 1>&2
     else
-        echo "$2 Exit code = $1." 1>&2
+        printf "%s Exit code = %s.\\n" "$2" "$1" 1>&2
     fi
 
     exit "$1"
 }
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 check_for_prerequisite()
 {
@@ -41,43 +53,41 @@ check_for_prerequisite()
     test "$#" -eq 1 || print_error_and_exit 2 "check_for_prerequisite(): There has not been passed exactly one argument!"
 
     # check if the argument is a program which is installed
-    command -v "$1" > /dev/null 2>&1 || print_error_and_exit 6 "check_for_prerequisite(): I require $1 but it's not installed :-("
+    command -v "$1" > /dev/null 2>&1 || print_error_and_exit 6 "check_for_prerequisite(): I require $1 but it is not installed!"
 }
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 # check if no arguments have been passed to the script
-test "$#" -gt 0 && print_error_and_exit 1 "$0: You have passed some unexpected argument(s) to the script!"
+test "$#" -gt 0 && print_error_and_exit 1 "$0: You have passed some unexpected argument(s) to the script. No arguments expected!"
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 # check for prerequisites
 check_for_prerequisite "pgrep"
 check_for_prerequisite "xdotool"
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
-# global constants
-lightshot_key="Print"
-lightshot_name="Lightshot"
+# get the Lightshot process id
+lightshot_process_id=$(pgrep "$lightshot_process_name")
 
-# ------------------------------------------------------------------------------
+# test if a process id has been successfully acquired
+is_number "$lightshot_process_id" || print_error_and_exit 7 "lightshot_process_id: The argument is not a number! Lightshot is most probably not running."
 
-# get the lightshot pid
-lightshot_pid=$(pgrep "$lightshot_name")
+#------------------------------------------------------------------------------
 
-# test if a pid has been successfully acquired
-is_number "$lightshot_pid" || print_error_and_exit 7 "lightshot_pid: The argument is not a number!\\nLightshot is most probably not running."
+# get the window id from the Lightshot process id
+    #--all   : Require that all conditions be met.
+    #--limit : Stop searching after finding N matching windows.
+    #--pid   : Match windows that belong to a specific process id.
+    #--name  : Match against the window name. This is the same string that is displayed in the window titlebar.
+lightshot_window_id=$(xdotool search --all --limit 1 --pid "$lightshot_process_id" --name "$lightshot_process_name")
 
-# ------------------------------------------------------------------------------
+# test if a window id has been successfully acquired
+is_number "$lightshot_window_id" || print_error_and_exit 8 "lightshot_window_id: The argument is not a number! Lightshot is most probably not running."
 
-# get the window id from lightshot pid
-lightshot_wnd=$(xdotool search --limit 1 --all --pid "$lightshot_pid" --name "$lightshot_name")
+#------------------------------------------------------------------------------
 
-# test if a window handler has been successfully acquired
-is_number "$lightshot_wnd" || print_error_and_exit 8 "lightshot_wnd: The argument is not a number!\\nLightshot is most probably not running."
-
-# ------------------------------------------------------------------------------
-
-# simulate a print screen key press on the lightshot window
-xdotool key --window "$lightshot_wnd" "$lightshot_key"
+# simulate the above pre-defined print screen hotkey press on the Lightshot window
+xdotool key --window "$lightshot_window_id" "$lightshot_printscreen_hotkey"
