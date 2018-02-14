@@ -1,13 +1,17 @@
 # Lightshot Print Screen key linux handler
 
-It is a standard POSIX shell script, it will most likely work on any distribution.
+This is a standard POSIX shell script, it will most likely work on any distribution.
 
-The only pre-requisites are:
+Pre-requisites are:
 
-Lightshot properly installed into Wine and the following software:
+- [X11 Windowing System](https://en.wikipedia.org/wiki/X_Window_System)
+
+- Lightshot properly installed into Wine and the following software:
+
+- Some CLI tools:
 ```
-pgrep
 xdotool
+pgrep
 ```
 
 This script handles global Print Screen key strokes for you to fully enjoy Lightshot on Linux.
