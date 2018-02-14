@@ -4,15 +4,11 @@ This is a standard POSIX shell script, it will most likely work on any distribut
 
 Pre-requisites are:
 
-- [X11 Windowing System](https://en.wikipedia.org/wiki/X_Window_System)
+- [X11 Window System](https://en.wikipedia.org/wiki/X_Window_System).
 
-- Lightshot properly installed into Wine and the following software:
+- [Lightshot](https://app.prntscr.com/en/wine-lightshot.html) properly installed into [Wine](https://www.winehq.org/).
 
-- Some CLI tools:
-```
-xdotool
-pgrep
-```
+- Some CLI tools: [`xdotool`](http://manpages.ubuntu.com/manpages/xenial/man1/xdotool.1.html), [`pgrep`](https://linux.die.net/man/1/pgrep)
 
 This script handles global Print Screen key strokes for you to fully enjoy Lightshot on Linux.
 
