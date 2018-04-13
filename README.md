@@ -24,7 +24,7 @@ Keyboard -> Shortcuts -> Custom Shortcuts -> click on button named Add custom sh
 
 ----------------------------------------
 
-# If you like the script, consider donating any amount to my cryptocurrency accounts:
+# If you like the script, consider donating any amount to my cryptocurrency accounts
 
 **Bitcoin**
 ```
