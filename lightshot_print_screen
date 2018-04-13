@@ -127,7 +127,7 @@ is_number "$lightshot_process_id" || print_error_and_exit 7 "lightshot_process_i
 lightshot_window_id=$(xdotool search --all --limit 1 --pid "$lightshot_process_id" --name "$lightshot_process_name")
 
 # test if a window id has been successfully acquired
-is_number "$lightshot_window_id" || print_error_and_exit 8 "lightshot_window_id: The argument is not a number!\\n\\tLightshot is most probably not running."
+is_number "$lightshot_window_id" || print_error_and_exit 8 "lightshot_window_id" "The argument is not a number!\\n\\tLightshot is most probably not running."
 
 #------------------------------------------------------------------------------
 
