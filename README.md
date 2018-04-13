@@ -21,3 +21,27 @@ Keyboard -> Shortcuts -> Custom Shortcuts -> click on button named Add custom sh
 # Screenshot from Linux Mint 18.3
 
 ![Screenshot from Linux Mint 18.3](https://www.vlastimilburian.cz/images/lightshot_print_screen.png)
+
+----------------------------------------
+
+# If you like the script, consider donating any amount to my cryptocurrency accounts:
+
+Bitcoin:
+```
+3GtoxYJxYMgYxygy3eMsPEAZoUpB5QxwFi
+```
+
+Bitcoin Cash:
+```
+qptkqu6t2s9wmvhrln3mvpa5e99ggqxspq4utpfzg9
+```
+
+Ethereum:
+```
+0x0DAbD9B3e1042840489E36AFA73bAF295157c592
+```
+
+Litecoin
+```
+MAfqAtE82FoefL8UXsX8byrLkQxvagmJ1K
+```
