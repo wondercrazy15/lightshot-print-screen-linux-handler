@@ -3,63 +3,79 @@
 # treat unset variables as an error when substituting
 set -o nounset
 
-# global constants for an easy set-up:
-    # lightshot_printscreen_hotkey: set this to the same hotkey which you have set up in Lightshot
-    #                               example: for left control and print screen key -> type Control_L+Print
+#------------------------------------------------------------------------------
+
+# global constants for an easy set-up
+#
+# lightshot_printscreen_hotkey: set this to the same hotkey which you have set up in Lightshot
+#                               example: for left control and print screen key -> type Control_L+Print
 lightshot_printscreen_hotkey="Print"
-    # lightshot_process_name: do not change this one, it is a case-sensitive name of the Lightshot process
+
+# lightshot_process_name: no need to change this one; it is a case-sensitive name of the Lightshot process
 lightshot_process_name="Lightshot"
 
 #------------------------------------------------------------------------------
 
-is_number()
+print_error_and_exit()
+# expected arguments:
+# $1 = exit code
+# $2 = error origin; usually function name
+# $3 = error message
 {
-    # check if exactly one argument has been passed
-    test "$#" -eq 1 || print_error_and_exit 5 "is_number(): There has not been passed exactly one argument!"
+    # colors definitions
+    bold=$(tput bold)
+    red=$(tput setaf 1)
+    yellow=$(tput setaf 3)
+    nocolor=$(tput sgr0)
+    bold_red="$bold$red"
+    bold_yellow="$bold$yellow"
 
-    # check if the argument is an integer
-    test "$1" -eq "$1" 2> /dev/null
+    # check if exactly 3 arguments have been passed
+    # if not, print out an internal error without colors
+    if [ "$#" -ne 3 ]
+    then
+        printf "print_error_and_exit() internal error\\n\\n\\tThere has been passed a wrong number of arguments (%b)! Expected 3:\\n\\t\\t1 - exit code\\n\\t\\t2 - error origin\\n\\t\\t3 - error message\\n\\nexit code = 2\\n" "$#" 1>&2
+        exit 2
+    fi
+
+    # check if the first argument is a number
+    # if not, print out an internal error without colors
+    if ! [ "$1" -eq "$1" ] 2> /dev/null
+    then
+        printf "print_error_and_exit() internal error\\n\\n\\tThere has been passed the first argument as not a number (%b)!\\n\\tExpected an exit code.\\n\\nexit code = 2\\n" "$1" 1>&2
+        exit 2
+    fi
+
+    # check if we have color support
+    if [ -x /usr/bin/tput ] && tput setaf 1 > /dev/null 2>&1
+    then
+        # here we do have color support, so we highlight the error origin and the exit code
+        printf "%b%b()\\n\\n\\t%b%b%b\\n\\nexit code = %b%b\\n" "$bold_yellow" "$2" "$nocolor" "$3" "$bold_red" "$1" "$nocolor" 1>&2
+        exit "$1"
+    else
+        printf "%b()\\n\\n\\t%b\\n\\nexit code = %b\\n" "$2" "$3" "$1" 1>&2
+        exit "$1"
+    fi
 }
 
 #------------------------------------------------------------------------------
 
-print_error_and_exit()
-{
-    # check if exactly two arguments have been passed
-    test "$#" -eq 2 || print_error_and_exit 3 "print_error_and_exit(): There have not been passed exactly two arguments!"
-
-    # check if the first argument is a number
-    is_number "$1" || print_error_and_exit 4 "print_error_and_exit(): The argument #1 is not a number!"
-
-    # check if we have color support
-    if test -x /usr/bin/tput && tput setaf 1 > /dev/null 2>&1
-    then
-        bold=$(tput bold)
-        red=$(tput setaf 1)
-        nocolor=$(tput sgr0)
-        printf "%s%s%s Exit code = %s.%s\\n" "$bold" "$red" "$2" "$1" "$nocolor" 1>&2
-    else
-        printf "%s Exit code = %s.\\n" "$2" "$1" 1>&2
-    fi
-
-    exit "$1"
-}
+# expected arguments to the script: none
+# check if no arguments have been passed to the script
+[ "$#" -gt 0 ] && print_error_and_exit 1 "$0" "You have passed $# unexpected argument(s) to the script!\\n\\tNo arguments expected."
 
 #------------------------------------------------------------------------------
 
 check_for_prerequisite()
+# expected arguments:
+# $1 = program name
 {
     # check if exactly one argument has been passed
-    test "$#" -eq 1 || print_error_and_exit 2 "check_for_prerequisite(): There has not been passed exactly one argument!"
+    [ "$#" -eq 1 ] || print_error_and_exit 3 "check_for_prerequisite" "There has not been passed exactly one argument!\\n\\tA program name expected."
 
     # check if the argument is a program which is installed
-    command -v "$1" > /dev/null 2>&1 || print_error_and_exit 6 "check_for_prerequisite(): I require $1 but it is not installed!"
+    command -v "$1" > /dev/null 2>&1 || print_error_and_exit 4 "check_for_prerequisite" "I require $1 but it is not installed! Please install it."
 }
-
-#------------------------------------------------------------------------------
-
-# check if no arguments have been passed to the script
-test "$#" -gt 0 && print_error_and_exit 1 "$0: You have passed some unexpected argument(s) to the script. No arguments expected!"
 
 #------------------------------------------------------------------------------
 
@@ -69,11 +85,37 @@ check_for_prerequisite "xdotool"
 
 #------------------------------------------------------------------------------
 
-# get the Lightshot process id
-lightshot_process_id=$(pgrep "$lightshot_process_name")
+get_process_id_using_process_name()
+# expected arguments:
+# $1 = process name
+{
+    # check if exactly one argument has been passed
+    [ "$#" -eq 1 ] || print_error_and_exit 5 "get_process_id_using_process_name" "There has not been passed exactly one argument!\\n\\tA process name expected."
+
+    # try to get the process id using the process name
+    pgrep "$1"
+}
+
+#------------------------------------------------------------------------------
+
+is_number()
+# expected arguments:
+# $1 = any variable
+{
+    # check if exactly one argument has been passed
+    [ "$#" -eq 1 ] || print_error_and_exit 6 "is_number" "There has not been passed exactly one argument!\\n\\tOne variable to test expected."
+
+    # check if the argument is an integer number 
+    [ "$1" -eq "$1" 2> /dev/null ]
+}
+
+#------------------------------------------------------------------------------
+
+# try to get the Lightshot process id
+lightshot_process_id=$(get_process_id_using_process_name "$lightshot_process_name")
 
 # test if a process id has been successfully acquired
-is_number "$lightshot_process_id" || print_error_and_exit 7 "lightshot_process_id: The argument is not a number! Lightshot is most probably not running."
+is_number "$lightshot_process_id" || print_error_and_exit 7 "lightshot_process_id" "The argument is not a number!\\n\\tLightshot is most probably not running."
 
 #------------------------------------------------------------------------------
 
@@ -85,7 +127,7 @@ is_number "$lightshot_process_id" || print_error_and_exit 7 "lightshot_process_i
 lightshot_window_id=$(xdotool search --all --limit 1 --pid "$lightshot_process_id" --name "$lightshot_process_name")
 
 # test if a window id has been successfully acquired
-is_number "$lightshot_window_id" || print_error_and_exit 8 "lightshot_window_id: The argument is not a number! Lightshot is most probably not running."
+is_number "$lightshot_window_id" || print_error_and_exit 8 "lightshot_window_id: The argument is not a number!\\n\\tLightshot is most probably not running."
 
 #------------------------------------------------------------------------------
 
