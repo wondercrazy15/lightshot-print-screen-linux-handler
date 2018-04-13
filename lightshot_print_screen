@@ -106,7 +106,7 @@ is_number()
     [ "$#" -eq 1 ] || print_error_and_exit 6 "is_number" "There has not been passed exactly one argument!\\n\\tOne variable to test expected."
 
     # check if the argument is an integer number 
-    [ "$1" -eq "$1" 2> /dev/null ]
+    [ "$1" -eq "$1" ] 2> /dev/null
 }
 
 #------------------------------------------------------------------------------
