@@ -26,22 +26,30 @@ Keyboard -> Shortcuts -> Custom Shortcuts -> click on button named Add custom sh
 
 # If you like the script, consider donating any amount to my cryptocurrency accounts:
 
-Bitcoin:
+**Bitcoin**
 ```
 3GtoxYJxYMgYxygy3eMsPEAZoUpB5QxwFi
 ```
 
-Bitcoin Cash:
+**Bitcoin Cash**
 ```
 qptkqu6t2s9wmvhrln3mvpa5e99ggqxspq4utpfzg9
 ```
 
-Ethereum:
+**Ethereum**
 ```
 0x0DAbD9B3e1042840489E36AFA73bAF295157c592
 ```
 
-Litecoin
+**Litecoin**
 ```
 MAfqAtE82FoefL8UXsX8byrLkQxvagmJ1K
 ```
+
+Thank you!
+
+----------------------------------------
+
+# Reporting bugs and suggestions
+
+Please send an email to me: info@vlastimilburian.cz
