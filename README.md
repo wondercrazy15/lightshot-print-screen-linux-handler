@@ -28,22 +28,27 @@ Keyboard -> Shortcuts -> Custom Shortcuts -> click on button named Add custom sh
 
 **Bitcoin**
 ```
-3GtoxYJxYMgYxygy3eMsPEAZoUpB5QxwFi
+32fD1Qkx5Kf6GbjewTLhBkjrZGryYjTotS
 ```
 
 **Bitcoin Cash**
 ```
-qptkqu6t2s9wmvhrln3mvpa5e99ggqxspq4utpfzg9
+qrsh8dwwrpvdxj6le8gvv9uq0u72zzmjzvger0qzd6
 ```
 
 **Ethereum**
 ```
-0x0DAbD9B3e1042840489E36AFA73bAF295157c592
+0x2537a26e5F8AF085Fce9fBe0e45BDA6dBa0c0349
+```
+
+**Ethereum Classic**
+```
+0x3fbf8Cba84FAB0F3Bd5aaa7a81663e4831fb5eC4
 ```
 
 **Litecoin**
 ```
-MAfqAtE82FoefL8UXsX8byrLkQxvagmJ1K
+MNg1JdTmC1FmYLiGiB5XzRRXJVg325X84Y
 ```
 
 Thank you!
