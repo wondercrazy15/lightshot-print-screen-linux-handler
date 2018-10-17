@@ -57,4 +57,4 @@ Thank you!
 
 # Reporting bugs and suggestions
 
-Please send an email to me: info@vlastimilburian.cz
+Please open a [new issue ticket](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/issues/new).
