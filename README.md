@@ -18,9 +18,9 @@ Keyboard -> Shortcuts -> Custom Shortcuts -> click on button named Add custom sh
 
 ----------------------------------------
 
-# Screenshot from Linux Mint 18.3
+# Screenshot from Linux Mint 19
 
-![Screenshot from Linux Mint 18.3](https://i.imgur.com/JzvNnAo.png)
+![Screenshot from Linux Mint 19](https://i.imgur.com/JzvNnAo.png)
 
 ----------------------------------------
 
