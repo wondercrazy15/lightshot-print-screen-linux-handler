@@ -20,7 +20,7 @@ Keyboard -> Shortcuts -> Custom Shortcuts -> click on button named Add custom sh
 
 # Screenshot from Linux Mint 18.3
 
-![Screenshot from Linux Mint 18.3](https://www.vlastimilburian.cz/images/lightshot_print_screen.png)
+![Screenshot from Linux Mint 18.3](https://i.imgur.com/JzvNnAo.png)
 
 ----------------------------------------
 
