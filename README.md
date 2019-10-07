@@ -6,11 +6,13 @@ It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it s
 
 ## Pre-requisites
 
+- Some necessary CLI tools:
+	- [`xdotool`](http://manpages.ubuntu.com/manpages/bionic/man1/xdotool.1.html)
+	- [`pgrep`](https://linux.die.net/man/1/pgrep)
+
 - [X11 Window System](https://en.wikipedia.org/wiki/X_Window_System).
 
 - [Lightshot](https://app.prntscr.com/en/wine-lightshot.html) properly installed into [Wine](https://www.winehq.org/).
-
-- Some CLI tools: [`xdotool`](http://manpages.ubuntu.com/manpages/bionic/man1/xdotool.1.html), [`pgrep`](https://linux.die.net/man/1/pgrep)
 
 ## Usage instructions
 
@@ -38,7 +40,7 @@ Version : 2.0
 GitHub  : https://git.io/fx2US
 ----------------------------------------------------------------------
 
-Usage: lightshot_print_screen_key_handler [-k "HotKey"]
+Usage: lightshot_print_screen [-k "HotKey"]
 
    -k "HotKey": Optional switch requiring one argument,
 		which is the print screen hotkey combination.
