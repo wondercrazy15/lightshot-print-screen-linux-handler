@@ -26,13 +26,13 @@ Just place it somewhere and put a path to it e.g. in Linux Mint 19 to the:
 
 Let me just point out, that there are many error checks along the whole script, so I advise you to run it within your terminal while your Lightshot is running to possibly debug any and all misbehaviors.
 
-There is also the help switch
+There is also the help switch:
 
 ```
 ./lightshot-print-screen -h
 ```
 
-which will point out the same possibility:
+which will point out the possibility for you to feed the key combination you have configured in your Lightshot interface without ever editing the script:
 
 ```
 Script  : Lightshot Print Screen key Linux handler
