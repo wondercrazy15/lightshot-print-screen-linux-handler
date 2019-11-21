@@ -1,9 +1,27 @@
 #!/bin/sh
 
-# exit script if it tries to use undeclared variables
-set -u
+###############################################################################
+##                  Lightshot Print Screen key Linux handler                 ##
+##                        Portable POSIX shell script                        ##
+##                   Copyright: 2018-2019 Vlastimil Burian                   ##
+##                      E-mail: info@vlastimilburian.cz                      ##
+##                             License: GPL-3.0                              ##
+##                               Revision: 2.1                               ##
+###############################################################################
 
 #------------------------------------------------------------------------------
+
+# initial shell script options
+
+# from help: treat unset variables as an error when substituting
+# clarification: this means that accessing so far undeclared variable
+# produces immediate termination of the script with line number
+# and message: "unbound variable" or "parameter not set"
+set -o nounset
+
+#------------------------------------------------------------------------------
+
+# global variables
 
 # global hotkey variable for easy set-up
 # overridable with -k switch given to the script
@@ -13,57 +31,45 @@ hotkey='Print'
 
 #------------------------------------------------------------------------------
 
+# global constants (read-only variables)
+
 # these constants aim on fast script identification
-readonly script_name_executable=$( basename "$0" )
+readonly script_name_executable=$(basename "$0")
 readonly script_name_human_friendly='Lightshot Print Screen key Linux handler'
-readonly script_version='2.0'
+readonly script_version='2.1'
 readonly script_github_url='https://git.io/fx2US'
 
 #------------------------------------------------------------------------------
 
 tput_colors_supported ()
-## bool function - getter of the terminal color support
+# bool function - getter of the terminal color support
 # if true, then this code defines global color constants
 {
     command -v tput && tput bold && [ "$(tput colors)" -ge 8 ]
 } > \
 /dev/null 2>&1
 
+# if tput colors are supported, we define them here
 if tput_colors_supported; then
-
-    # tput special sequences
-#    number_of_colors=$(tput colors)
+    # special tput sequences
     color_reset=$(tput sgr0)
     bold_text=$(tput bold)
-
     # definitions of basic colors with bold test
     color_red=${bold_text}$(tput setaf 1)
-#    color_green=${bold_text}$(tput setaf 2)
     color_yellow=${bold_text}$(tput setaf 3)
-#    color_blue=${bold_text}$(tput setaf 4)
-#    color_magenta=${bold_text}$(tput setaf 5)
-#    color_cyan=${bold_text}$(tput setaf 6)
-#    color_white=${bold_text}$(tput setaf 7)
-
 else
-
-#    number_of_colors=0
+    # because there can't be used any undeclared variable(s),
+    # we need to ensure there are empty ones in case of no tput support
     color_reset=
     bold_text=
     color_red=
-#    color_green=
     color_yellow=
-#    color_blue=
-#    color_magenta=
-#    color_cyan=
-#    color_white=
-
 fi
 
 #------------------------------------------------------------------------------
 
 print_error ()
-## prints custom heading and error message without exiting the script; in color, if available
+# prints custom heading and error message without exiting the script; in color, if available
 # expected arguments:
 # $1 = error heading (string)
 # $2 = error message (string)
@@ -87,7 +93,7 @@ print_error ()
 } >&2
 
 print_error_and_exit_script ()
-## direcly uses print_error, but this one exits the script with customizable exit code (optional 3rd argument)
+# direcly uses print_error, but this one exits the script with customizable exit code (optional 3rd argument)
 # expected arguments:
 # $1 = error heading (string)
 # $2 = error message (string)
@@ -122,7 +128,8 @@ print_error_and_exit_script ()
 
 # shellcheck disable=SC2120
 is_user_root ()
-## this is the only POSIX-ly correct way to find out if the user is root
+# gets if the user who is running this script is root
+# this is the only POSIX-ly correct way to find out if the user is root
 {
     if [ $# -ne 0 ]; then
         print_error "is_user_root() input check" "Some arguments have been passed to the function!\\nNo arguments expected.\\nPassed: $*"
@@ -132,7 +139,7 @@ is_user_root ()
 }
 
 # check if the user had by any chance run the script with root privileges
-# the reason is, this script should under no circumstances be run as root
+# reason being, this script should not, under normal circumstances, be run as root
 # in this function call, the SC2119 information is irrelevant and safe to ignore
 # link to wiki: https://github.com/koalaman/shellcheck/wiki/SC2119
 # shellcheck disable=SC2119
@@ -143,6 +150,7 @@ fi
 #------------------------------------------------------------------------------
 
 check_for_prerequisites ()
+# loops over arguments and finds out, if such program names exist on the system
 # expected arguments:
 # any number of program names; at least one
 {
@@ -161,11 +169,12 @@ check_for_prerequisites ()
     done
 }
 
-check_for_prerequisites xdotool pgrep
+check_for_prerequisites xdotool pgrep head
 
 #------------------------------------------------------------------------------
 
 is_number ()
+# finds out if the given argument is integer number
 # expected arguments:
 # $1 = variable or literal
 {
@@ -182,6 +191,7 @@ is_number ()
 #------------------------------------------------------------------------------
 
 print_usage_and_exit ()
+# prints out usage help and exits the script
 # expected arguments:
 # $1 = exit code
 {
@@ -204,7 +214,7 @@ print_usage_and_exit ()
     printf 'Version : %s\n' "${script_version}"
     printf 'GitHub  : %s\n' "${script_github_url}"
     printf '%70s\n\n' '' | tr ' ' '-'
-    printf 'Usage: %s [-k "HotKey"]\n\n' "${script_name_executable}"
+    printf 'Usage: %s [-k "HotKey"]\n\n' "./${script_name_executable}"
     printf '   -k "HotKey": Optional switch requiring one argument,\n'
     printf '\t\twhich is the print screen hotkey combination.\n\n'
     printf '\t\tFor the left Control key and the Print Screen key:\n'
@@ -218,22 +228,18 @@ print_usage_and_exit ()
 # process arguments given to the script
 while getopts ":hk:" cli_option; do
     case "${cli_option}" in
-        ( k ) hotkey=${OPTARG}
-        break
-        ;;
-        ( h ) print_usage_and_exit 0
-        break
-        ;;
-        ( * ) print_usage_and_exit 1
-        break
-        ;;
+        ( k ) hotkey=${OPTARG}      ; break ;;
+        ( h ) print_usage_and_exit 0; break ;;
+        ( * ) print_usage_and_exit 1; break ;;
     esac
 done
-shift $(( OPTIND - 1 ))
+shift $((OPTIND - 1))
 
 #------------------------------------------------------------------------------
 
 get_process_id ()
+# tries to find out a process id using a process name
+# there might be more than one, so we take the first one
 # expected arguments:
 # $1 = process name
 {
@@ -254,6 +260,7 @@ get_process_id ()
 #------------------------------------------------------------------------------
 
 get_window_id ()
+# tries to find out a window id using a process id and a window name
 # expected arguments:
 # $1 = process id
 # $2 = window name
@@ -273,11 +280,10 @@ get_window_id ()
         print_error_and_exit_script "get_window_id() input check" "The second argument is an empty string! Expected a window name."
     fi
 
-    # try to get the window id using the process id and the window name
-        # --all   : Require that all conditions be met.
-        # --limit : Stop searching after finding N matching windows.
-        # --pid   : Match windows that belong to a specific process id.
-        # --name  : Match against the window name. This is the same string that is displayed in the window titlebar.
+    # --all  : Require all conditions to be met.
+    # --limit: Stop searching after finding N matching windows.
+    # --pid  : Match windows that belong to a specific process id.
+    # --name : Match against the window name. This is the same string that is displayed in the window titlebar.
     if ! xdotool search --all --limit 1 --pid "$1" --name "$2"; then
         print_error_and_exit_script 'get_window_id()' "No window matching process id '$1' and window name '$2' has been found."
     fi
@@ -285,8 +291,7 @@ get_window_id ()
 
 #------------------------------------------------------------------------------
 
-# here comes the core part,
-# an actual use of the above generic functions
+# here we actually make use of the above generic functions
 
 # try to get the Lightshot process id
 lightshot_process_id=$( get_process_id Lightshot.exe )
