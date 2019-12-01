@@ -21,11 +21,14 @@ It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it s
 
 ### Download and Preparation
 
-Visit the download page, or the latest 
+Visit the [latest release download page](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/releases/latest). If you directly download the file ```lightshot_print_screen```, you will need to open your terminal and give it **permission to read and execute** to all users with:
+```lang-sh
+chmod 755 lightshot_print_screen
+```
 
 ### General
 
-Just place it somewhere and put a path to it e.g. in Linux Mint 19 to the:
+Place it somewhere and put a path to it e.g. in Linux Mint 19 to the:
 
 **Keyboard** → **Shortcuts** → **Custom Shortcuts** → click on button named **Add custom shortcut** and fill the form out.
 
