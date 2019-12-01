@@ -9,7 +9,7 @@ It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it s
 ## Pre-requisites
 
 - One necessary CLI tool to have manually installed:
-	- [`xdotool`](http://manpages.ubuntu.com/manpages/bionic/man1/xdotool.1.html): In Ubuntu under the package is in the _universe_ part of official archive.
+	- [`xdotool`](http://manpages.ubuntu.com/manpages/bionic/man1/xdotool.1.html): In Ubuntu the package is in the _universe_ part of official archive.
 
 - [X11 Window System](https://en.wikipedia.org/wiki/X_Window_System).
 
