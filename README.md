@@ -2,7 +2,7 @@
 
 This script handles global Print Screen key strokes for you to fully enjoy Lightshot on Linux.
 
-It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it should work in any Linux distribution (shell).
+It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it should work in any Linux distribution (more precisely, your shell).
 
 ----------------------------------------
 
@@ -18,6 +18,10 @@ It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it s
 ----------------------------------------
 
 ## Usage instructions
+
+### Download and Preparation
+
+Visit the download page, or the latest 
 
 ### General
 
