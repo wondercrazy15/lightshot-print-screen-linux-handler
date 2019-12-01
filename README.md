@@ -36,11 +36,11 @@ which will point out the possibility for you to feed the key combination you hav
 
 ```
 Script  : Lightshot Print Screen key Linux handler
-Version : 2.0
+Version : 2.1
 GitHub  : https://git.io/fx2US
 ----------------------------------------------------------------------
 
-Usage: lightshot_print_screen [-k "HotKey"]
+Usage: ./lightshot_print_screen [-k "HotKey"]
 
    -k "HotKey": Optional switch requiring one argument,
 		which is the print screen hotkey combination.
