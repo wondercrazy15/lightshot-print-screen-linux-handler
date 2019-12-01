@@ -2,17 +2,20 @@
 
 This script handles global Print Screen key strokes for you to fully enjoy Lightshot on Linux.
 
-It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it shall work on any Linux distribution.
+It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it should work in any Linux distribution (shell).
+
+----------------------------------------
 
 ## Pre-requisites
 
-- Some necessary CLI tools:
-	- [`xdotool`](http://manpages.ubuntu.com/manpages/bionic/man1/xdotool.1.html)
-	- [`pgrep`](https://linux.die.net/man/1/pgrep)
+- One necessary CLI tool to have manually installed:
+	- [`xdotool`](http://manpages.ubuntu.com/manpages/bionic/man1/xdotool.1.html): In Ubuntu under the package is in the _universe_ part of official archive.
 
 - [X11 Window System](https://en.wikipedia.org/wiki/X_Window_System).
 
 - [Lightshot](https://app.prntscr.com/en/wine-lightshot.html) properly installed into [Wine](https://www.winehq.org/).
+
+----------------------------------------
 
 ## Usage instructions
 
@@ -52,6 +55,8 @@ Usage: ./lightshot_print_screen [-k "HotKey"]
 ### Graphical interface
 
 There is none.
+
+----------------------------------------
 
 ## Screenshot from Linux Mint 19
 
