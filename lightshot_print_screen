@@ -6,7 +6,7 @@
 ##                   Copyright: 2018-2019 Vlastimil Burian                   ##
 ##                      E-mail: info@vlastimilburian.cz                      ##
 ##                             License: GPL-3.0                              ##
-##                               Revision: 2.1                               ##
+##                               Revision: 2.2                               ##
 ##                        GitHub: https://git.io/fx2US                       ##
 ###############################################################################
 
@@ -37,7 +37,7 @@ hotkey='Print'
 # these constants aim on fast script identification
 readonly script_name_executable=$(basename "$0")
 readonly script_name_human_friendly='Lightshot Print Screen key Linux handler'
-readonly script_version='2.1'
+readonly script_version='2.2'
 readonly script_github_url='https://git.io/fx2US'
 
 #------------------------------------------------------------------------------
@@ -56,8 +56,8 @@ if tput_colors_supported; then
     color_reset=$(tput sgr0)
     bold_text=$(tput bold)
     # definitions of basic colors with bold test
-    color_red=${bold_text}$(tput setaf 1)
-    color_yellow=${bold_text}$(tput setaf 3)
+    color_red=$bold_text$(tput setaf 1)
+    color_yellow=$bold_text$(tput setaf 3)
 else
     # because there can't be used any undeclared variable(s),
     # we need to ensure there are empty ones in case of no tput support
@@ -88,9 +88,9 @@ print_error ()
     error_heading=$1; error_message=$2
 
     printf '%b\n\n%b\n\n%b\n' \
-        "Error heading: ${color_yellow}${error_heading}${color_reset}" \
-        "Error message: ${error_message}" \
-        "${color_red}Fatal error occurred.${color_reset}"
+        "Error heading: $color_yellow$error_heading$color_reset" \
+        "Error message: $error_message$color_red" \
+        "Fatal error occurred.$color_reset"
 } >&2
 
 print_error_and_exit_script ()
@@ -122,7 +122,6 @@ print_error_and_exit_script ()
     print_error "$1" "$2"
 
     exit "$return_code"
-
 } >&2
 
 #------------------------------------------------------------------------------
@@ -133,7 +132,7 @@ is_user_root ()
 # this is the only POSIX-ly correct way to find out if the user is root
 {
     if [ $# -ne 0 ]; then
-        print_error "is_user_root() input check" "Some arguments have been passed to the function!\\nNo arguments expected.\\nPassed: $*"
+        print_error 'is_user_root() input check' "Some arguments have been passed to the function!\\nNo arguments expected.\\nPassed: $*"
     fi
 
     [ "$(id -u)" -eq 0 ]
@@ -159,6 +158,7 @@ check_for_prerequisites ()
     if [ $# -eq 0 ]; then
         print_error_and_exit_script 'check_for_prerequisites() input check' "No arguments have been passed to the function! At least one program name expected."
     fi
+
     # iterate through the given arguments
     while [ $# -gt 0 ]; do
         # check if the argument is a program which is installed
@@ -211,15 +211,18 @@ print_usage_and_exit ()
         exec >&2
     fi
 
-    printf 'Script  : %s\n' "${script_name_human_friendly}"
-    printf 'Version : %s\n' "${script_version}"
-    printf 'GitHub  : %s\n' "${script_github_url}"
-    printf '%70s\n\n' '' | tr ' ' '-'
-    printf 'Usage: %s [-k "HotKey"]\n\n' "./${script_name_executable}"
-    printf '   -k "HotKey": Optional switch requiring one argument,\n'
-    printf '\t\twhich is the print screen hotkey combination.\n\n'
-    printf '\t\tFor the left Control key and the Print Screen key:\n'
-    printf '\t\t"Control_L+Print"\n'
+cat << EOF
+Script  : $script_name_human_friendly
+Version : $script_version
+GitHub  : $script_github_url
+----------------------------------------------------------------------
+Usage: $script_name_executable [-k "HotKey"]
+
+-k "HotKey": Optional switch requiring one argument,
+             which is the print screen hotkey combination.
+             For the left Control key and the Print Screen key:
+             "Control_L+Print" for example.
+EOF
 
     exit "$1"
 }
@@ -228,11 +231,13 @@ print_usage_and_exit ()
 
 # process arguments given to the script
 while getopts ":hk:" cli_option; do
-    case "${cli_option}" in
-        ( k ) hotkey=${OPTARG}      ; break ;;
+
+    case "$cli_option" in
+        ( k ) hotkey=$OPTARG        ; break ;;
         ( h ) print_usage_and_exit 0; break ;;
         ( * ) print_usage_and_exit 1; break ;;
     esac
+
 done
 shift $((OPTIND - 1))
 
@@ -246,16 +251,16 @@ get_process_id ()
 {
     # check if exactly one argument has been passed
     if [ $# -ne 1 ]; then
-        print_error_and_exit_script "get_process_id() input check" "Exactly one argument has not been passed to the function!\\nPassed: $*"
+        print_error_and_exit_script 'get_process_id() input check' "Exactly one argument has not been passed to the function!\\nPassed: $*"
     fi
 
     # check if the argument is an empty string
     if [ -z "$1" ]; then
-        print_error_and_exit_script "get_process_id() input check" "The argument is an empty string! Expected a process name."
+        print_error_and_exit_script 'get_process_id() input check' "The argument is an empty string! Expected a process name."
     fi
 
     # try to get the process id using the process name
-    pgrep "$1" | head -n 1
+    pgrep "$1" | head -1
 }
 
 #------------------------------------------------------------------------------
@@ -268,17 +273,17 @@ get_window_id ()
 {
     # check if exactly two arguments have been passed
     if [ $# -ne 2 ]; then
-        print_error_and_exit_script "get_window_id() input check" "Exactly two arguments have not been passed to the function! Expected a process id and a window name.\\nPassed: $*"
+        print_error_and_exit_script 'get_window_id() input check' "Exactly two arguments have not been passed to the function! Expected a process id and a window name.\\nPassed: $*"
     fi
 
     # check if the first argument is a number
     if ! is_number "$1"; then
-        print_error_and_exit_script "get_window_id() input check" "The first argument is not a number! Expected a process id.\\nPassed: $1"
+        print_error_and_exit_script 'get_window_id() input check' "The first argument is not a number! Expected a process id.\\nPassed: $1"
     fi
 
     # check if the second argument is an empty string
     if [ -z "$2" ]; then
-        print_error_and_exit_script "get_window_id() input check" "The second argument is an empty string! Expected a window name."
+        print_error_and_exit_script 'get_window_id() input check' "The second argument is an empty string! Expected a window name."
     fi
 
     # --all  : Require all conditions to be met.
@@ -297,16 +302,18 @@ get_window_id ()
 # try to get the Lightshot process id
 lightshot_process_id=$( get_process_id Lightshot.exe )
 
-if ! is_number "${lightshot_process_id}"; then
-    print_error_and_exit_script "is_number \${lightshot_process_id}" "Lightshot process is not running."
+if ! is_number "$lightshot_process_id"; then
+    # shellcheck disable=SC2016
+    print_error_and_exit_script 'is_number $lightshot_process_id' "Lightshot process is not running."
 fi
 
 # try to get the Lightshot window id
-lightshot_window_id=$( get_window_id "${lightshot_process_id}" Lightshot )
+lightshot_window_id=$( get_window_id "$lightshot_process_id" Lightshot )
 
-if ! is_number "${lightshot_window_id}"; then
-    print_error_and_exit_script "is_number \${lightshot_window_id}" "Lightshot process is running but window not found."
+if ! is_number "$lightshot_window_id"; then
+    # shellcheck disable=SC2016
+    print_error_and_exit_script 'is_number $lightshot_window_id' "Lightshot process is running but window not found."
 fi
 
 # simulate the pre-defined print screen hotkey on the Lightshot window
-xdotool key --window "${lightshot_window_id}" "${hotkey}"
+xdotool key --window "$lightshot_window_id" "$hotkey"
