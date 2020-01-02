@@ -46,17 +46,15 @@ which will point out the possibility for you to feed the key combination you hav
 
 ```
 Script  : Lightshot Print Screen key Linux handler
-Version : 2.1
+Version : 2.2
 GitHub  : https://git.io/fx2US
 ----------------------------------------------------------------------
+Usage: lightshot_print_screen [-k "HotKey"]
 
-Usage: ./lightshot_print_screen [-k "HotKey"]
-
-   -k "HotKey": Optional switch requiring one argument,
-		which is the print screen hotkey combination.
-
-		For the left Control key and the Print Screen key:
-		"Control_L+Print"
+-k "HotKey": Optional switch requiring one argument,
+             which is the print screen hotkey combination.
+             For the left Control key and the Print Screen key:
+             "Control_L+Print" for example.
 ```
 
 ### Graphical interface
@@ -65,9 +63,9 @@ There is none.
 
 ----------------------------------------
 
-## Screenshot from Linux Mint 19
+## Screenshot from Linux Mint 19.3
 
-![Screenshot from Linux Mint 19](https://i.imgur.com/JzvNnAo.png)
+![Screenshot from Linux Mint 19.3](https://i.imgur.com/AyhK0uu.png)
 
 ----------------------------------------
 
