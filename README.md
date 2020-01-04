@@ -21,8 +21,9 @@ It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it s
 
 ### Download and Preparation
 
-Visit the [latest release download page](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/releases/latest). If you directly download the file ```lightshot_print_screen```, you will need to open your terminal and give it **permission to read and execute** to all users with:
-```lang-sh
+Visit the [latest release download page](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/releases/latest). If you directly download the file `lightshot_print_screen`, you will need to open your terminal and give it **permission to read and execute** to all users with:
+
+```lang-none
 chmod 755 lightshot_print_screen
 ```
 
@@ -38,13 +39,13 @@ Let me just point out, that there are many error checks along the whole script, 
 
 There is also the help switch:
 
-```
+```lang-none
 ./lightshot-print-screen -h
 ```
 
 which will point out the possibility for you to feed the key combination you have configured in your Lightshot interface without ever editing the script:
 
-```
+```lang-none
 Script  : Lightshot Print Screen key Linux handler
 Version : 2.2
 GitHub  : https://git.io/fx2US
