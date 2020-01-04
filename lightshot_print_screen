@@ -229,7 +229,7 @@ EOF
 
 #------------------------------------------------------------------------------
 
-# process arguments given to the script
+# process switches given to the script
 while getopts ":hk:" cli_option; do
 
     case "$cli_option" in
