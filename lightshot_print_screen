@@ -57,14 +57,23 @@ if tput_colors_supported; then
     bold_text=$(tput bold)
     # definitions of basic colors with bold test
     color_red=$bold_text$(tput setaf 1)
+#    color_green=$bold_text$(tput setaf 2)
     color_yellow=$bold_text$(tput setaf 3)
+#    color_blue=$bold_text$(tput setaf 4)
+#    color_magenta=$bold_text$(tput setaf 5)
+#    color_cyan=$bold_text$(tput setaf 6)
+#    color_white=$bold_text$(tput setaf 7)
 else
     # because there can't be used any undeclared variable(s),
     # we need to ensure there are empty ones in case of no tput support
     color_reset=
     bold_text=
     color_red=
+#    color_green=
     color_yellow=
+#    color_blue=
+#    color_cyan=
+#    color_white=
 fi
 
 #------------------------------------------------------------------------------
