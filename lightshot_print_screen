@@ -29,6 +29,7 @@ set -o nounset
 # set this to the same hotkey which you have set up in your Lightshot options
 # example: for the left control key and the print screen key, type "Control_L+Print"
 hotkey='Print'
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 #------------------------------------------------------------------------------
 
@@ -225,12 +226,17 @@ Script  : $script_name_human_friendly
 Version : $script_version
 GitHub  : $script_github_url
 ----------------------------------------------------------------------
+Description: This script works with XDOTOOL to trigger Print Screen
+key combination in Lightshot application installed in Linux in Wine.
+----------------------------------------------------------------------
 Usage: $script_name_executable [-k "HotKey"]
 
--k "HotKey": Optional switch requiring one argument,
-             which is the print screen hotkey combination.
-             For the left Control key and the Print Screen key:
-             "Control_L+Print" for example.
+    -k "HotKey": Optional switch requiring one argument,
+        which is the print screen hotkey combination.
+        For the left Control key and the Print Screen key
+        that would be "Control_L+Print" (as an example).
+
+    -h: Show this help.
 EOF
 
     exit "$1"
