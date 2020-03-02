@@ -1,235 +1,173 @@
 #!/bin/sh
 
-###############################################################################
-##                  Lightshot Print Screen key Linux handler                 ##
-##                        Portable POSIX shell script                        ##
-##                   Copyright: 2018-2020 Vlastimil Burian                   ##
-##                      E-mail: info@vlastimilburian.cz                      ##
-##                             License: GPL-3.0                              ##
-##                               Revision: 2.2                               ##
-##                        GitHub: https://git.io/fx2US                       ##
-###############################################################################
+#―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――#
+#                    Lightshot print screen Linux handler                     #
+#                         Portable POSIX shell script                         #
+#                    Copyright: 2018-2020 Vlastimil Burian                    #
+#                       E-mail: info@vlastimilburian.cz                       #
+#                              License: GPL v3.0                              #
+#                                Revision: 2.9                                #
+#                        GitHub: https://git.io/fx2US                         #
+#―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――#
 
-#------------------------------------------------------------------------------
+# global shell script variables
+# hotkey variable for easy set-up; overridable with -k switch
+# set this to the same hotkey which you have set up in your Lightshot options
+# for the left control key and the print screen key put Control_L+Print in
+hotkey=Print
 
-# initial shell script options
-
-# from help: treat unset variables as an error when substituting
+# global shell script options
+# treat unset variables as an error when substituting
 # clarification: this means that accessing so far undeclared variable
 # produces immediate termination of the script with line number
 # and message: "unbound variable" or "parameter not set"
 set -o nounset
 
-#------------------------------------------------------------------------------
-
-# global variables
-
-# global hotkey variable for easy set-up
-# overridable with -k switch given to the script
-# set this to the same hotkey which you have set up in your Lightshot options
-# example: for the left control key and the print screen key, type "Control_L+Print"
-hotkey='Print'
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-#------------------------------------------------------------------------------
-
-# global constants (read-only variables)
-
-# these constants aim on fast script identification
-readonly script_name_executable=$(basename "$0")
-readonly script_name_human_friendly='Lightshot Print Screen key Linux handler'
-readonly script_version='2.2'
-readonly script_github_url='https://git.io/fx2US'
-
-#------------------------------------------------------------------------------
-
 tput_colors_supported ()
 # bool function - getter of the terminal color support
-# if true, then this code defines global color constants
 {
-    command -v tput && tput bold && [ "$(tput colors)" -ge 8 ]
-} > \
-/dev/null 2>&1
+    command -v tput && tput bold && tput setaf 1 && [ "$(tput colors)" -ge 8 ]
+} > /dev/null 2>&1
 
-# if tput colors are supported, we define them here
 if tput_colors_supported; then
-    # special tput sequences
+    # shellcheck disable=SC2034
     color_reset=$(tput sgr0)
+    # shellcheck disable=SC2034
     bold_text=$(tput bold)
-    # definitions of basic colors with bold test
+    # shellcheck disable=SC2034
     color_red=$bold_text$(tput setaf 1)
-#    color_green=$bold_text$(tput setaf 2)
+    # shellcheck disable=SC2034
+    color_green=$bold_text$(tput setaf 2)
+    # shellcheck disable=SC2034
     color_yellow=$bold_text$(tput setaf 3)
-#    color_blue=$bold_text$(tput setaf 4)
-#    color_magenta=$bold_text$(tput setaf 5)
-#    color_cyan=$bold_text$(tput setaf 6)
-#    color_white=$bold_text$(tput setaf 7)
+    # shellcheck disable=SC2034
+    color_blue=$bold_text$(tput setaf 4)
+    # shellcheck disable=SC2034
+    color_magenta=$bold_text$(tput setaf 5)
+    # shellcheck disable=SC2034
+    color_cyan=$bold_text$(tput setaf 6)
+    # shellcheck disable=SC2034
+    color_white=$bold_text$(tput setaf 7)
 else
-    # because there can't be used any undeclared variable(s),
-    # we need to ensure there are empty ones in case of no tput support
+    # shellcheck disable=SC2034
     color_reset=
+    # shellcheck disable=SC2034
     bold_text=
+    # shellcheck disable=SC2034
     color_red=
-#    color_green=
+    # shellcheck disable=SC2034
+    color_green=
+    # shellcheck disable=SC2034
     color_yellow=
-#    color_blue=
-#    color_cyan=
-#    color_white=
+    # shellcheck disable=SC2034
+    color_blue=
+    # shellcheck disable=SC2034
+    color_cyan=
+    # shellcheck disable=SC2034
+    color_white=
 fi
 
-#------------------------------------------------------------------------------
+dump_arguments ()
+# string function - prints arguments; position and contents
+# indicates empty arguments and integer numbers for debugging
+{
+    printf '%b' "dump_arguments()\\n----------------\\n$# arguments are being inspected"
+    [ $# -gt 0 ] && { printf ':\n'; i=1; } || printf '.\n'
+    while [ $# -gt 0 ]; do
+        printf '%s' "[$i]: '$1'"
+        [ -z "$1" ] && printf ' (empty)'
+        [ "$1" -eq "$1" ] 2> /dev/null && printf ' (integer)'
+        printf '\n'
+        shift 1
+        i=$((i+1))
+    done
+} >&2
 
 print_error ()
-# prints custom heading and error message without exiting the script; in color, if available
-# expected arguments:
-# $1 = error heading (string)
-# $2 = error message (string)
+# string function - prints an error message with a custom heading
 {
-    # check if exactly 2 non-empty arguments have been passed
-    # if not, print out an input check error without colors
-    if [ $# -ne 2 ] || [ -z "$1" ] || [ -z "$2" ]; then
-        # $1 and $2 are to be shown literally in this message
-        # link to wiki: https://github.com/koalaman/shellcheck/wiki/SC2016
+    if ! { [ $# -eq 2 ] && [ -n "$1" ] && [ -n "$2" ]; }; then
+        dump_arguments "$@"
         # shellcheck disable=SC2016
-        printf 'print_error() input check\n\nWrong number or empty arguments have been passed to the function: %s\n\nExpected the following 2:\n$1 - error heading\n$2 - error message\n' $#
-        return 1
+        printf '%b\n' \
+            '\nprint_error() input check' \
+            'Wrong number or empty arguments have been passed to the function.' \
+            'Expected the following strings: $1 = error heading, $2 = error message.'
+        exit 1
     fi
-
-    error_heading=$1; error_message=$2
-
-    printf '%b\n\n%b\n\n%b\n' \
-        "Error heading: $color_yellow$error_heading$color_reset" \
-        "Error message: $error_message$color_red" \
-        "Fatal error occurred.$color_reset"
+    printf '%b\n' \
+        "${color_red}Error occurred$color_reset" \
+        "Error heading: $color_yellow$1$color_reset" \
+        "Error message: $2"
+        
 } >&2
 
-print_error_and_exit_script ()
-# direcly uses print_error, but this one exits the script with customizable exit code (optional 3rd argument)
-# expected arguments:
-# $1 = error heading (string)
-# $2 = error message (string)
-# $3 = return code (number) - optional, if not given, 1 is used
+print_error__exit ()
+# direcly uses print_error, but this one exits the script
 {
-    # check if 2 (or 3) non-empty arguments have been passed
-    # if not, print out an input check error without colors
-    if { [ $# -ne 2 ] && [ $# -ne 3 ]; } || [ -z "$1" ] || [ -z "$2" ]; then
-        # $1, $2, $3 are to be shown literally in this message
-        # link to wiki: https://github.com/koalaman/shellcheck/wiki/SC2016
+    if ! { [ $# -eq 2 ] && [ -n "$1" ] && [ -n "$2" ]; } &&
+       ! { [ $# -eq 3 ] && [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ] && [ "$3" -eq "$3" ] 2> /dev/null; }; then
+        dump_arguments "$@"
         # shellcheck disable=SC2016
-        printf 'print_error_and_exit_script() input check\n\nWrong number or empty arguments have been passed to the function: %s\n\nExpected the following 2 or 3:\n$1 - error heading (string)\n$2 - error message (string)\n$3 - return code (number) - optional, if not given, 1 is used\n' $#
-        return 1
+        printf '%b\n' \
+            '\nprint_error__exit() input check' \
+            'Wrong number, type or empty arguments have been passed to the function.' \
+            'Expected the following strings: $1 = error heading, $2 = error message.' \
+            'Optionally, accepting a number: $3 = exit code; if not given 1 is used.'
+        exit 1
     fi
-
-    if [ $# -eq 2 ] || [ -z "$3" ]; then
-        return_code=1
-    elif [ -n "$3" ] && ! [ "$3" -eq "$3" ] 2> /dev/null; then
-        printf 'print_error_and_exit_script() input check\n\nThird argument is expected to be a return code, i.e. a number.\nBut something else was passed instead: %s\n' "$3"
-        return 1
-    else
-        return_code=$3
-    fi
-
+    [ $# -eq 3 ] && exit_code=$3 || exit_code=1
     print_error "$1" "$2"
-
-    exit "$return_code"
+    exit "$exit_code"
 } >&2
 
-#------------------------------------------------------------------------------
-
-# shellcheck disable=SC2120
-is_user_root ()
-# gets if the user who is running this script is root
-# this is the only POSIX-ly correct way to find out if the user is root
+check_for_requirements ()
+# void function - finds out if all required programs are available
 {
-    if [ $# -ne 0 ]; then
-        print_error 'is_user_root() input check' "Some arguments have been passed to the function!\\nNo arguments expected.\\nPassed: $*"
-    fi
-
-    [ "$(id -u)" -eq 0 ]
-}
-
-# check if the user had by any chance run the script with root privileges
-# reason being, this script should not, under normal circumstances, be run as root
-# in this function call, the SC2119 information is irrelevant and safe to ignore
-# link to wiki: https://github.com/koalaman/shellcheck/wiki/SC2119
-# shellcheck disable=SC2119
-if is_user_root; then
-    print_error_and_exit_script 'is_user_root()' "Running this script with root privileges is not allowed!"
-fi
-
-#------------------------------------------------------------------------------
-
-check_for_prerequisites ()
-# loops over arguments and finds out, if such program names exist on the system
-# expected arguments:
-# any number of program names; at least one
-{
-    # check if no argument has been passed
     if [ $# -eq 0 ]; then
-        print_error_and_exit_script 'check_for_prerequisites() input check' "No arguments have been passed to the function! At least one program name expected."
+        print_error__exit 'check_for_requirements() input check' "No arguments passed to the function! At least one program name expected."
     fi
-
-    # iterate through the given arguments
     while [ $# -gt 0 ]; do
-        # check if the argument is a program which is installed
-        if ! command -v "$1" > /dev/null 2>&1; then
-            print_error_and_exit_script 'check_for_prerequisites()' "This script requires '$1' but it is not available on this system! Please install the corresponding package manually."
+        if [ -z "$1" ]; then
+            print_error__exit 'check_for_requirements() input check' "Empty argument passed to the function!"
         fi
-        # move to the next argument
-        shift
+        if ! command -v "$1" > /dev/null 2>&1; then
+            print_error__exit 'check_for_requirements()' "This script requires '$1' but it is not available on this system! Please install the corresponding package manually."
+        fi
+        shift 1
     done
 }
 
-check_for_prerequisites xdotool pgrep head
+check_for_requirements xdotool pgrep
 
-#------------------------------------------------------------------------------
-
-is_number ()
-# finds out if the given argument is integer number
-# expected arguments:
-# $1 = variable or literal
+is_integer ()
+# bool function - finds out if a given argument is an integer number
 {
-    # check if exactly one argument has been passed
     if [ $# -ne 1 ]; then
-        print_error_and_exit_script 'is_number() input check' "Exactly one argument has not been passed to the function!One variable or literal to test expected.\\nPassed: $*"
+        dump_arguments "$@"
+        print_error__exit 'is_integer() input check' "Exactly one argument was not passed to the function! One variable or literal to test expected."
     fi
-
-    # check if the argument is an integer number
-    # this will return an exit code of the command itself directly
     [ "$1" -eq "$1" ] 2> /dev/null
 }
 
-#------------------------------------------------------------------------------
-
 print_usage_and_exit ()
 # prints out usage help and exits the script
-# expected arguments:
-# $1 = exit code
 {
-    # check if exactly one argument has been passed
-    if [ $# -ne 1 ]; then
-        print_error_and_exit_script 'print_usage_and_exit() input check' "Exactly one argument has not been passed to the function!\\nPassed: $*"
+    if [ $# -ne 1 ] || ! is_integer "$1"; then
+        dump_arguments "$@"
+        print_error__exit 'print_usage_and_exit() input check' "Exactly one argument as a number was not passed to the function! Expected an exit code from the script."
     fi
-
-    # check if the argument is a number
-    if ! is_number "$1"; then
-        print_error_and_exit_script 'print_usage_and_exit() input check' "The argument is not a number! Expected an exit code from the script.\\nPassed: $1"
-    fi
-
-    # in case of non-zero exit code given, redirect all output to stderr
-    if [ "$1" -ne 0 ]; then
-        exec >&2
-    fi
+    [ "$1" -ne 0 ] && exec >&2
 
 cat << EOF
-Script  : $script_name_human_friendly
-Version : $script_version
-GitHub  : $script_github_url
-----------------------------------------------------------------------
+Script  : Lightshot print screen Linux handler
+Version : 2.9
+GitHub  : https://git.io/fx2US
+-------------------------------------------------------------------
 Description: This script works with XDOTOOL to trigger Print Screen
-key combination in Lightshot application installed in Linux in Wine.
-----------------------------------------------------------------------
-Usage: $script_name_executable [-k "HotKey"]
+key combination in Lightshot application installed on Linux in Wine
+-------------------------------------------------------------------
+Usage: ./$(basename "$0") [-k "HotKey"]
 
     -k "HotKey": Optional switch requiring one argument,
         which is the print screen hotkey combination.
@@ -242,92 +180,75 @@ EOF
     exit "$1"
 }
 
-#------------------------------------------------------------------------------
-
-# process switches given to the script
 while getopts ":hk:" cli_option; do
-
     case "$cli_option" in
-        ( k ) hotkey=$OPTARG        ; break ;;
-        ( h ) print_usage_and_exit 0; break ;;
-        ( * ) print_usage_and_exit 1; break ;;
+        (k) hotkey=$OPTARG        ; break ;;
+        (h) print_usage_and_exit 0; break ;;
+        (*) print_usage_and_exit 1; break ;;
     esac
-
 done
 shift $((OPTIND - 1))
 
-#------------------------------------------------------------------------------
-
 get_process_id ()
 # tries to find out a process id using a process name
-# there might be more than one, so we take the first one
-# expected arguments:
-# $1 = process name
 {
     # check if exactly one argument has been passed
     if [ $# -ne 1 ]; then
-        print_error_and_exit_script 'get_process_id() input check' "Exactly one argument has not been passed to the function!\\nPassed: $*"
+        dump_arguments "$@"
+        print_error__exit 'get_process_id() input check' "Exactly one argument was not passed to the function!"
     fi
 
     # check if the argument is an empty string
     if [ -z "$1" ]; then
-        print_error_and_exit_script 'get_process_id() input check' "The argument is an empty string! Expected a process name."
+        print_error__exit 'get_process_id() input check' "The argument is an empty string! Expected a process name."
     fi
 
     # try to get the process id using the process name
     pgrep "$1" | head -1
 }
 
-#------------------------------------------------------------------------------
-
 get_window_id ()
 # tries to find out a window id using a process id and a window name
-# expected arguments:
-# $1 = process id
-# $2 = window name
 {
-    # check if exactly two arguments have been passed
     if [ $# -ne 2 ]; then
-        print_error_and_exit_script 'get_window_id() input check' "Exactly two arguments have not been passed to the function! Expected a process id and a window name.\\nPassed: $*"
+        dump_arguments "$@"
+        print_error__exit 'get_window_id() input check' "Exactly two arguments have not been passed to the function! Expected a process id and a window name."
     fi
 
     # check if the first argument is a number
-    if ! is_number "$1"; then
-        print_error_and_exit_script 'get_window_id() input check' "The first argument is not a number! Expected a process id.\\nPassed: $1"
+    if ! is_integer "$1"; then
+        dump_arguments "$@"
+        print_error__exit 'get_window_id() input check' "The first argument is not a number! Expected a process id."
     fi
 
     # check if the second argument is an empty string
     if [ -z "$2" ]; then
-        print_error_and_exit_script 'get_window_id() input check' "The second argument is an empty string! Expected a window name."
+        print_error__exit 'get_window_id() input check' "The second argument is an empty string! Expected a window name."
     fi
 
-    # --all  : Require all conditions to be met.
-    # --limit: Stop searching after finding N matching windows.
-    # --pid  : Match windows that belong to a specific process id.
-    # --name : Match against the window name. This is the same string that is displayed in the window titlebar.
+    #--all  : Require all conditions to be met.
+    #--limit: Stop searching after finding N matching windows.
+    #--pid  : Match windows that belong to a specific process id.
+    #--name : Match against the window name. This is the same string that is displayed in the window titlebar.
     if ! xdotool search --all --limit 1 --pid "$1" --name "$2"; then
-        print_error_and_exit_script 'get_window_id()' "No window matching process id '$1' and window name '$2' has been found."
+        print_error__exit 'get_window_id()' "No window matching process id '$1' and window name '$2' has been found."
     fi
 }
 
-#------------------------------------------------------------------------------
-
-# here we actually make use of the above generic functions
-
 # try to get the Lightshot process id
-lightshot_process_id=$( get_process_id Lightshot.exe )
+lightshot_process_id=$(get_process_id Lightshot.exe)
 
-if ! is_number "$lightshot_process_id"; then
+if ! is_integer "$lightshot_process_id"; then
     # shellcheck disable=SC2016
-    print_error_and_exit_script 'is_number $lightshot_process_id' "Lightshot process is not running."
+    print_error__exit 'is_integer $lightshot_process_id' "Lightshot process is not running."
 fi
 
 # try to get the Lightshot window id
-lightshot_window_id=$( get_window_id "$lightshot_process_id" Lightshot )
+lightshot_window_id=$(get_window_id "$lightshot_process_id" Lightshot)
 
-if ! is_number "$lightshot_window_id"; then
+if ! is_integer "$lightshot_window_id"; then
     # shellcheck disable=SC2016
-    print_error_and_exit_script 'is_number $lightshot_window_id' "Lightshot process is running but window not found."
+    print_error__exit 'is_integer $lightshot_window_id' "Lightshot process is running but window not found."
 fi
 
 # simulate the pre-defined print screen hotkey on the Lightshot window
