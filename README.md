@@ -6,7 +6,7 @@ It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it s
 
 ----------------------------------------
 
-## Pre-requisites
+## Requirements
 
 - One necessary CLI tool to have manually installed:
 	- [`xdotool`](http://manpages.ubuntu.com/manpages/bionic/man1/xdotool.1.html): In Ubuntu the package is in the _universe_ part of official archive.
