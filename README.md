@@ -1,6 +1,6 @@
 # Lightshot print screen Linux handler
 
-This script handles global Print Screen key strokes for you to fully enjoy [Lightshot](https://app.prntscr.com/en/) screenshot tool on Linux.
+This script handles global Print Screen key strokes for you to fully enjoy [Lightshot screenshot tool](https://app.prntscr.com/en/) on Linux.
 
 It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) shell script, it should work in any [Linux](https://en.wikipedia.org/wiki/Linux) distribution (more precisely, your [shell](https://en.wikipedia.org/wiki/Unix_shell)).
 
