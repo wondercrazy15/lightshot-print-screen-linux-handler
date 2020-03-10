@@ -135,6 +135,8 @@ check_for_requirements ()
     done
 }
 
+check_for_requirements xdotool pgrep
+
 is_integer ()
 {
     if ! { [ $# -eq 1 ] && [ -n "$1" ]; }; then
