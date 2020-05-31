@@ -6,7 +6,7 @@
 #                    Copyright: 2018-2020 Vlastimil Burian                    #
 #                       E-mail: info@vlastimilburian.cz                       #
 #                              License: GPL v3.0                              #
-#                                Revision: 3.0                                #
+#                                Revision: 3.1                                #
 #                        GitHub: https://git.io/fx2US                         #
 #―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――#
 
@@ -172,7 +172,7 @@ print_usage_and_exit ()
     [ "$1" -ne 0 ] && exec >&2
 cat << EOF
 Script  : Lightshot print screen Linux handler
-Version : 3.0
+Version : 3.1
 GitHub  : https://git.io/fx2US
 -------------------------------------------------------------------
 Description: This script works with XDOTOOL to trigger Print Screen
