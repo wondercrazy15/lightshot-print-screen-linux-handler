@@ -118,6 +118,21 @@ print_error__exit ()
     exit "$exit_code"
 } >&2
 
+# shellcheck disable=SC2120
+is_user_root ()
+{
+    if [ $# -ne 0 ]; then
+        dump_arguments "$@"
+        print_error__exit 'is_user_root() input check' "Some arguments have been passed to the function! No arguments expected.\\nPassed: $*"
+    fi
+    [ "$(id -u)" -eq 0 ]
+}
+
+# shellcheck disable=SC2119
+if is_user_root; then
+    print_error__exit 'is_user_root()' "Running this script with root privileges is not allowed!"
+fi
+
 check_for_requirements ()
 {
     if [ $# -eq 0 ]; then
@@ -135,7 +150,9 @@ check_for_requirements ()
     done
 }
 
-check_for_requirements xdotool pgrep
+# the program `pgrep`   is from the package `procps`
+# the program `xdotool` is from the package `xdotool`
+check_for_requirements pgrep xdotool
 
 is_integer ()
 {
