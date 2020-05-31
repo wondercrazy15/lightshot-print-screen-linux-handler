@@ -47,7 +47,7 @@ which will point out the possibility for you to feed the key combination you hav
 
 ```lang-none
 Script  : Lightshot print screen Linux handler
-Version : 3.0
+Version : 3.1
 GitHub  : https://git.io/fx2US
 -------------------------------------------------------------------
 Description: This script works with XDOTOOL to trigger Print Screen
