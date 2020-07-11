@@ -1,14 +1,14 @@
 #!/bin/sh
 
-#―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――#
-#                    Lightshot print screen Linux handler                     #
-#                         Portable POSIX shell script                         #
-#                    Copyright: 2018-2020 Vlastimil Burian                    #
-#                       E-mail: info@vlastimilburian.cz                       #
-#                              License: GPL v3.0                              #
-#                                Revision: 3.1                                #
-#                        GitHub: https://git.io/fx2US                         #
-#―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――#
+#+------------------------------------------------------------------------------+
+#|                     Lightshot print screen Linux handler                     |
+#|                          Portable POSIX shell script                         |
+#|                     Copyright: 2018-2020 Vlastimil Burian                    |
+#|                        E-mail: info@vlastimilburian.cz                       |
+#|                               License: GPL v3.0                              |
+#|                                 Revision: 3.1                                |
+#|                         GitHub: https://git.io/fx2US                         |
+#+------------------------------------------------------------------------------+
 
 # global shell script variables
 # hotkey variable for easy set-up; overridable with -k switch
@@ -84,7 +84,7 @@ dump_arguments ()
 
 print_error ()
 {
-    if ! { [ $# -eq 2 ] && [ -n "$1" ] && [ -n "$2" ]; }; then
+    if ! { [ $# -eq 2 ] && [ -n "$1" ] && [ -n "$2" ]; } then
         dump_arguments "$@"
         # shellcheck disable=SC2016
         printf '%b\n' \
@@ -103,7 +103,7 @@ print_error ()
 print_error__exit ()
 {
     if ! { [ $# -eq 2 ] && [ -n "$1" ] && [ -n "$2" ]; } &&
-       ! { [ $# -eq 3 ] && [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ] && [ "$3" -eq "$3" ] 2> /dev/null; }; then
+       ! { [ $# -eq 3 ] && [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ] && [ "$3" -eq "$3" ] 2> /dev/null; } then
         dump_arguments "$@"
         # shellcheck disable=SC2016
         printf '%b\n' \
@@ -156,7 +156,7 @@ check_for_requirements pgrep xdotool
 
 is_integer ()
 {
-    if ! { [ $# -eq 1 ] && [ -n "$1" ]; }; then
+    if ! { [ $# -eq 1 ] && [ -n "$1" ]; } then
         dump_arguments "$@"
         print_error__exit 'is_integer() input check' "Exactly one non-empty argument was not passed to the function! One variable or literal to test expected."
     fi
@@ -165,7 +165,7 @@ is_integer ()
 
 print_usage_and_exit ()
 {
-    if ! { [ $# -eq 1 ] && [ -n "$1" ] && is_integer "$1"; }; then
+    if ! { [ $# -eq 1 ] && [ -n "$1" ] && is_integer "$1"; } then
         dump_arguments "$@"
         print_error__exit 'print_usage_and_exit() input check' "Exactly one argument as a number was not passed to the function! Expected an exit code from the script."
     fi
@@ -201,7 +201,7 @@ shift $((OPTIND - 1))
 
 get_process_id ()
 {
-    if ! { [ $# -eq 1 ] && [ -n "$1" ]; }; then
+    if ! { [ $# -eq 1 ] && [ -n "$1" ]; } then
         dump_arguments "$@"
         print_error__exit 'get_process_id() input check' "Exactly one non-empty argument was not passed to the function! Expected a process name."
     fi
@@ -210,7 +210,7 @@ get_process_id ()
 
 get_window_id ()
 {
-    if ! { [ $# -eq 2 ] && [ -n "$1" ] && is_integer "$1" && [ -n "$2" ]; }; then
+    if ! { [ $# -eq 2 ] && [ -n "$1" ] && is_integer "$1" && [ -n "$2" ]; } then
         dump_arguments "$@"
         print_error__exit 'get_window_id() input check' "Exactly two non-empty arguments were not passed to the function! Expected a process id (integer) and a window name (string)."
     fi
@@ -225,14 +225,14 @@ get_window_id ()
 
 lightshot_process_id=$(get_process_id Lightshot.exe)
 
-if ! { [ -n "$lightshot_process_id" ] && is_integer "$lightshot_process_id"; }; then
+if ! { [ -n "$lightshot_process_id" ] && is_integer "$lightshot_process_id"; } then
     # shellcheck disable=SC2016
     print_error__exit 'is_integer $lightshot_process_id' "Lightshot process was not found / is not running."
 fi
 
 lightshot_window_id=$(get_window_id "$lightshot_process_id" Lightshot)
 
-if ! { [ -n "$lightshot_window_id" ] && is_integer "$lightshot_window_id"; }; then
+if ! { [ -n "$lightshot_window_id" ] && is_integer "$lightshot_window_id"; } then
     # shellcheck disable=SC2016
     print_error__exit 'is_integer $lightshot_window_id' "Lightshot process was found / is running but its window was not found for some reason."
 fi
