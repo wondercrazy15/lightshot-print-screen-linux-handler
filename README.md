@@ -9,7 +9,7 @@ It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) (wiki) shell scrip
 ## Requirements
 
 - One necessary command-line tool to have manually installed:
-	- [`xdotool`](http://manpages.ubuntu.com/manpages/focal/man1/xdotool.1.html) (man page): In Ubuntu the package is in the _universe_ part of official archive.
+	- [`xdotool`](http://manpages.ubuntu.com/manpages/focal/man1/xdotool.1.html) (Ubuntu man page): In Ubuntu the package is in the _universe_ part of official archive.
 
 - [X Window System](https://en.wikipedia.org/wiki/X_Window_System) (wiki), with any [desktop environment](https://en.wikipedia.org/wiki/Desktop_environment) (wiki).
 
@@ -49,7 +49,7 @@ which will point out the possibility for you to feed the key combination you hav
 
 ```
 Script  : Lightshot print screen Linux handler
-Version : 4.0
+Version : 5.0
 GitHub  : https://git.io/fx2US
 -------------------------------------------------------------------
 Description: This script works with XDOTOOL to trigger Print Screen

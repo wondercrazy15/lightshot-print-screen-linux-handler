@@ -6,7 +6,7 @@
 #|                     Copyright: 2018-2020 Vlastimil Burian                    |
 #|                      M@il: info[..]vlastimilburian[..]cz                     |
 #|                               License: GPL 3.0                               |
-#|                                 Version: 4.0                                 |
+#|                                 Version: 5.0                                 |
 #|                         GitHub: https://git.io/fx2US                         |
 #+------------------------------------------------------------------------------+
 
@@ -25,48 +25,72 @@ hotkey=Print
 # produces immediate termination of the script with an error produced
 set -o nounset
 
-tput_colors_supported ()
+tput_setup_nix ()
 {
-    command -v tput && tput bold && tput setaf 1 && [ "$(tput colors)" -ge 8 ]
-} > /dev/null 2>&1
+    # terminfo
+    tput_cmd_set_fg_color='tput setaf'
+    tput_number_of_colors=$(tput colors 2> /dev/null) &&
+    tput_bold=$(tput bold 2> /dev/null) &&
+    tput_reset=$(tput sgr0 2> /dev/null)
+}
 
-if tput_colors_supported; then
-    # shellcheck disable=SC2034
-    color_reset=$(tput sgr0)
-    # shellcheck disable=SC2034
-    bold_text=$(tput bold)
-    # shellcheck disable=SC2034
-    color_red=$bold_text$(tput setaf 1)
-    # shellcheck disable=SC2034
-    color_green=$bold_text$(tput setaf 2)
-    # shellcheck disable=SC2034
-    color_yellow=$bold_text$(tput setaf 3)
-    # shellcheck disable=SC2034
-    color_blue=$bold_text$(tput setaf 4)
-    # shellcheck disable=SC2034
-    color_magenta=$bold_text$(tput setaf 5)
-    # shellcheck disable=SC2034
-    color_cyan=$bold_text$(tput setaf 6)
-    # shellcheck disable=SC2034
-    color_white=$bold_text$(tput setaf 7)
+tput_setup_bsd ()
+{
+    # termcap
+    tput_cmd_set_fg_color='tput AF'
+    tput_number_of_colors=$(tput Co 2> /dev/null) &&
+    tput_bold=$(tput md 2> /dev/null) &&
+    tput_reset=$(tput me 2> /dev/null)
+}
+
+tput_setup_none ()
+{
+    # no unset variables
+    tput_cmd_set_fg_color=
+    tput_number_of_colors=
+    tput_bold=
+    tput_reset=
+}
+
+if command -v tput > /dev/null 2>&1; then
+
+    if tput setaf > /dev/null 2>&1; then
+
+        if ! tput_setup_nix; then tput_setup_none; fi
+
+    elif tput AF > /dev/null 2>&1; then
+
+        if ! tput_setup_bsd; then tput_setup_none; fi
+
+    else
+        tput_setup_none
+    fi
+
 else
-    # shellcheck disable=SC2034
-    color_reset=
-    # shellcheck disable=SC2034
-    bold_text=
-    # shellcheck disable=SC2034
+    tput_setup_none
+fi
+
+tput_capability_test ()
+{
+    [ -n "$tput_cmd_set_fg_color" ] && [ -n "$tput_number_of_colors" ] && [ -n "$tput_bold" ] && [ -n "$tput_reset" ] &&
+    { [ "$tput_number_of_colors" -ge 8 ] && printf '%s' "$tput_bold" && $tput_cmd_set_fg_color 1; } > /dev/null 2>&1
+}
+
+if tput_capability_test; then
+    color_red=$tput_bold$($tput_cmd_set_fg_color 1)
+    color_green=$tput_bold$($tput_cmd_set_fg_color 2)
+    color_yellow=$tput_bold$($tput_cmd_set_fg_color 3)
+    color_blue=$tput_bold$($tput_cmd_set_fg_color 4)
+    color_magenta=$tput_bold$($tput_cmd_set_fg_color 5)
+    color_cyan=$tput_bold$($tput_cmd_set_fg_color 6)
+    color_white=$tput_bold$($tput_cmd_set_fg_color 7)
+else
     color_red=
-    # shellcheck disable=SC2034
     color_green=
-    # shellcheck disable=SC2034
     color_yellow=
-    # shellcheck disable=SC2034
     color_blue=
-    # shellcheck disable=SC2034
     color_magenta=
-    # shellcheck disable=SC2034
     color_cyan=
-    # shellcheck disable=SC2034
     color_white=
 fi
 
@@ -74,16 +98,13 @@ is_integer ()
 {
     if [ $# -ne 1 ]; then
         printf >&2 '%s\n' \
-            "${color_yellow}is_integer() input check$color_reset" \
+            "${color_yellow}is_integer() input check$tput_reset" \
             'Single argument was not passed to the function!' \
             'One variable to test expected.'
         exit 1
     fi
-    # ${1#-} will stripe off possible minus sign before check;
-    # plus sign not allowed by me, can be added with ${1#[+-]}
     case "${1#-}" in
         (0)               return 0 ;;
-        # In a calculator 005 might work, but POSIX shell operations could be another story -> needs testing?
         (0*)              return 1 ;;
         (*[!0123456789]*) return 1 ;;
         ('')              return 1 ;;
@@ -95,16 +116,18 @@ dump_args ()
 {
     punct=.; ${1+false} || { punct=:; i=1; }
     printf '%s\n' \
-        "${color_yellow}dump_args()$color_reset" \
-        "$color_white$# arguments inspected$punct$color_reset"
+        "${color_yellow}dump_args()$tput_reset" \
+        "$color_white$# arguments inspected$punct$tput_reset"
     while [ $# -gt 0 ]; do
-        printf "[$color_white%d$color_reset]: '%s' " "$i" "$1"
+        printf "[$color_white%d$tput_reset]: '%s' " "$i" "$1"
         if [ -z "$1" ]; then
-            printf '%s' "(${color_blue}empty$color_reset)"
+            printf '%s' "(${color_blue}empty$tput_reset)"
         elif is_integer "$1"; then
-            printf '%s' "(${color_green}integer$color_reset)"
+            printf '%s' "(${color_green}integer$tput_reset)"
+        elif [ -e "$1" ]; then
+            printf '%s' "(${color_magenta}file: $(file -b "$1")${tput_reset})"
         else
-            printf '%s' "(${color_red}string$color_reset)"
+            printf '%s' "(${color_red}string$tput_reset)"
         fi
         printf '\n'
         shift
@@ -117,14 +140,14 @@ print_error ()
     if ! { [ $# -eq 2 ] && [ -n "$1" ] && [ -n "$2" ]; } then
         dump_args "$@"
         printf '%b\n' \
-            "${color_yellow}print_error() input check$color_reset" \
+            "${color_yellow}print_error() input check$tput_reset" \
             'Wrong number, type or empty arguments have been passed to the function.' \
-            "Expected the following ${color_red}strings$color_reset: $color_cyan\$1$color_reset = error heading, $color_cyan\$2$color_reset = error message."
+            "Expected the following ${color_red}strings$tput_reset: $color_cyan\$1$tput_reset = error heading, $color_cyan\$2$tput_reset = error message."
         exit 1
     fi
     printf '%b\n' \
-        "${color_red}Error occurred$color_reset" \
-        "Error heading: $color_yellow$1$color_reset" \
+        "${color_red}Error occurred$tput_reset" \
+        "Error heading: $color_yellow$1$tput_reset" \
         "Error message: $2"
         
 } >&2
@@ -137,10 +160,10 @@ print_error__exit ()
         dump_args "$@"
         # shellcheck disable=SC2016
         printf '%b\n' \
-            "${color_yellow}print_error__exit() input check$color_reset" \
+            "${color_yellow}print_error__exit() input check$tput_reset" \
             'Wrong number, type or empty arguments have been passed to the function.' \
-            "Expected the following ${color_red}strings$color_reset: $color_cyan\$1$color_reset = error heading, $color_cyan\$2$color_reset = error message." \
-            "Optionally, accepting a ${color_green}number$color_reset: $color_cyan\$3$color_reset = exit code; if not given 1 is used." \
+            "Expected the following ${color_red}strings$tput_reset: $color_cyan\$1$tput_reset = error heading, $color_cyan\$2$tput_reset = error message." \
+            "Optionally, accepting a ${color_green}number$tput_reset: $color_cyan\$3$tput_reset = exit code; if not given 1 is used." \
             'Acceptable exit code range: anywhere between <1;125>; 1 is the default.'
         exit 1
     fi
@@ -154,7 +177,7 @@ is_user_root ()
 {
     if [ $# -ne 0 ]; then
         dump_args "$@"
-        print_error__exit 'is_user_root() input check' 'Some arguments have been passed to the function! No arguments expected.'
+        print_error__exit 'is_user_root() input check' "Some arguments have been passed to the function! No arguments expected."
     fi
     [ "$(id -u)" -eq 0 ]
 }
@@ -189,12 +212,12 @@ print_usage_and_exit ()
 {
     if ! { [ $# -eq 1 ] && is_integer "$1"; } then
         dump_args "$@"
-        print_error__exit 'print_usage_and_exit() input check' "${color_green}Number$color_reset required: $color_cyan\$1$color_reset = exit code from the script."
+        print_error__exit 'print_usage_and_exit() input check' "${color_green}Number$tput_reset required: $color_cyan\$1$tput_reset = exit code from the script."
     fi
     [ "$1" -ne 0 ] && exec >&2
 cat << EOF
 Script  : Lightshot print screen Linux handler
-Version : 4.0
+Version : 5.0
 GitHub  : https://git.io/fx2US
 -------------------------------------------------------------------
 Description: This script works with XDOTOOL to trigger Print Screen
@@ -225,7 +248,7 @@ get_process_id ()
 {
     if ! { [ $# -eq 1 ] && [ -n "$1" ]; } then
         dump_args "$@"
-        print_error__exit 'get_process_id() input check' "${color_red}String$color_reset required: $color_cyan\$1$color_reset = process name to find id to."
+        print_error__exit 'get_process_id() input check' "${color_red}String$tput_reset required: $color_cyan\$1$tput_reset = process name to find id to."
     fi
     pgrep "$1" | head -1
 }
@@ -260,8 +283,8 @@ if ! is_integer "$lightshot_window_id"; then
 fi
 
 if xdotool key --window "$lightshot_window_id" "$hotkey"; then
-    printf '%s\n' "Success, the hotkey = $hotkey was successfully sent to Lightshot window!"
-    printf '%s\n' "However, if Lightshot did not appear, you probably sent a bad hotkey(?)"
+    printf '%s\n' "${color_green}Success$tput_reset, the hotkey = $color_blue$hotkey$tput_reset was successfully sent to Lightshot window!"
+    printf '%s\n' "However, if Lightshot did not appear, you probably sent a bad hotkey.."
 else
-    print_error__exit "xdotool key --window $lightshot_window_id $hotkey" "The send hotkey command encountered an error."
+    print_error__exit "xdotool key --window $lightshot_window_id $hotkey" "The send-hotkey command encountered an error."
 fi
