@@ -6,7 +6,7 @@
 #|                     Copyright: 2018-2020 Vlastimil Burian                    |
 #|                      M@il: info[..]vlastimilburian[..]cz                     |
 #|                               License: GPL 3.0                               |
-#|                                 Version: 5.0                                 |
+#|                                 Version: 5.1                                 |
 #|                         GitHub: https://git.io/fx2US                         |
 #+------------------------------------------------------------------------------+
 
@@ -217,7 +217,7 @@ print_usage_and_exit ()
     [ "$1" -ne 0 ] && exec >&2
 cat << EOF
 Script  : Lightshot print screen Linux handler
-Version : 5.0
+Version : 5.1
 GitHub  : https://git.io/fx2US
 -------------------------------------------------------------------
 Description: This script works with XDOTOOL to trigger Print Screen
@@ -243,6 +243,11 @@ while getopts ":hk:" cli_option; do
     esac
 done
 shift $((OPTIND - 1))
+
+if [ $# -ne 0 ]; then
+    dump_args "$@"
+    print_usage_and_exit 1
+fi
 
 get_process_id ()
 {
