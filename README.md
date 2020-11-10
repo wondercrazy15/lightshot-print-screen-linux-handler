@@ -1,3 +1,7 @@
+[![Download the latest version](https://img.shields.io/badge/Download-Latest%20version-orange)](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/releases/latest) &nbsp; &nbsp; &nbsp; &nbsp; [![GPLv3 License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/blob/master/LICENSE) &nbsp; &nbsp; &nbsp; &nbsp; [![Maintained](https://img.shields.io/badge/Maintained-Yes-green.svg)](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/graphs/commit-activity) &nbsp; &nbsp; &nbsp; &nbsp; [![ShellCheck Passing](https://img.shields.io/badge/ShellCheck-Passing-brightgreen)](https://www.shellcheck.net)
+
+***
+
 # Lightshot print screen Linux handler
 
 This script handles global print screen key strokes for you to fully enjoy [Lightshot screenshot tool](https://app.prntscr.com/en/) (home page) on any Linux.
