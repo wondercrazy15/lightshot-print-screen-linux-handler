@@ -125,7 +125,7 @@ dump_args ()
         elif is_integer "$1"; then
             printf '%s' "(${color_green}integer$tput_reset)"
         elif [ -e "$1" ]; then
-            printf '%s' "(${color_magenta}file: $(file -b "$1")${tput_reset})"
+            printf '%s' "(${color_magenta}file: $(file -b "$1")$tput_reset)"
         else
             printf '%s' "(${color_red}string$tput_reset)"
         fi
@@ -204,8 +204,8 @@ check_for_requirements ()
     done
 }
 
-# `pgrep`   program is from `procps`  package (on Ubuntu in `main`)     - installed by default: YES
-# `xdotool` program is from `xdotool` package (on Ubuntu in `universe`) - installed by default: NO!
+# `pgrep`   program is from `procps`  package (on Ubuntu in `main`)     - installed by default: Yes, usually
+# `xdotool` program is from `xdotool` package (on Ubuntu in `universe`) - installed by default: No
 check_for_requirements pgrep xdotool
 
 print_usage_and_exit ()

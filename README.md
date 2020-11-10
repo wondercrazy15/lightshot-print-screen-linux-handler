@@ -79,4 +79,4 @@ There is none. This script however launches the Lightshot print screen editor di
 
 ## Reporting bugs and suggestions
 
-Please open a [new issue ticket](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/issues/new) (direct link) or you can also mail me at <a href="mailto:info@vlastimilburian.cz">info@vlastimilburian.cz</a> (email link).
+Please open a [new issue ticket](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/issues/new) (direct link) or you can also mail me at [info@vlastimilburian.cz](mailto:info@vlastimilburian.cz) (email link).
