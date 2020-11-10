@@ -53,7 +53,7 @@ which will point out the possibility for you to feed the key combination you hav
 
 ```
 Script  : Lightshot print screen Linux handler
-Version : 5.1
+Version : 5.2
 GitHub  : https://git.io/fx2US
 -------------------------------------------------------------------
 Description: This script works with XDOTOOL to trigger Print Screen
