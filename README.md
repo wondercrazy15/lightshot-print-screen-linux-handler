@@ -1,4 +1,4 @@
-[![Download the latest version](https://img.shields.io/badge/Download-Latest%20version-orange)](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/releases/latest) &nbsp; &nbsp; &nbsp; &nbsp; [![GPLv3 License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/blob/master/LICENSE) &nbsp; &nbsp; &nbsp; &nbsp; [![Maintained](https://img.shields.io/badge/Maintained-Yes-green.svg)](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/graphs/commit-activity) &nbsp; &nbsp; &nbsp; &nbsp; [![ShellCheck Passing](https://img.shields.io/badge/ShellCheck-Passing-brightgreen)](https://www.shellcheck.net)
+[![Donate via PayPal](https://img.shields.io/badge/Donate%20%24%24%24-via%20PayPal-%23013088)](#paypal_my_qrcode__anchor) &nbsp; &nbsp; &nbsp; &nbsp; [![Download the latest version](https://img.shields.io/badge/Download-Latest%20version-orange)](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/releases/latest) &nbsp; &nbsp; &nbsp; &nbsp; [![GPLv3 License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/blob/master/LICENSE) &nbsp; &nbsp; &nbsp; &nbsp; [![Maintained](https://img.shields.io/badge/Maintained-Yes-green.svg)](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/graphs/commit-activity) &nbsp; &nbsp; &nbsp; &nbsp; [![ShellCheck Passing](https://img.shields.io/badge/ShellCheck-Passing-brightgreen)](https://www.shellcheck.net)
 
 ***
 
@@ -84,3 +84,15 @@ There is none. This script however launches the Lightshot print screen editor di
 ## Reporting bugs and suggestions
 
 Please open a [new issue ticket](https://github.com/burianvlastimil/lightshot-print-screen-linux-handler/issues/new) (direct link) or you can also mail me at [info@vlastimilburian.cz](mailto:info@vlastimilburian.cz) (email link).
+
+***
+
+## Donations
+
+### <span id="paypal_my_qrcode__anchor">Donate via PayPal<span>
+
+Donations are possible via my PayPal account issued on the same email address as mentioned above.
+
+Or you can directly scan the below QR code with your smartphone.
+
+![My PayPal QR Code](https://www.vlastimilburian.cz/images/paypal-my-qrcode.png)
