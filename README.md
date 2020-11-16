@@ -95,4 +95,4 @@ Donations are possible via my PayPal account issued on the same email address as
 
 Or you can directly scan the below QR code with your smartphone.
 
-![My PayPal QR Code](https://www.vlastimilburian.cz/images/paypal-my-qrcode.png)
+![My PayPal QR Code](https://www.vlastimilburian.cz/images/paypal-my-qrcode.png?)
