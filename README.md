@@ -12,8 +12,11 @@ It is a standard [POSIX](https://en.wikipedia.org/wiki/POSIX) (wiki) shell scrip
 
 ## Requirements
 
-- One necessary command-line tool to have manually installed:
+- One necessary command-line tool to have manually installed for sure:
 	- [`xdotool`](http://manpages.ubuntu.com/manpages/focal/man1/xdotool.1.html) (Ubuntu man page): In Ubuntu the package is in the _universe_ part of official archive.
+
+- One more necessary command-line tool which should be pre-installed on most [distributions](https://en.wikipedia.org/wiki/Linux_distribution) (wiki):
+	- `procps` containing [`pgrep`](https://linux.die.net/man/1/pgrep) (man page) which my script uses: In Ubuntu the package is in the _main_ part of official archive.
 
 - [X Window System](https://en.wikipedia.org/wiki/X_Window_System) (wiki), with any [desktop environment](https://en.wikipedia.org/wiki/Desktop_environment) (wiki).
 
@@ -93,6 +96,6 @@ Please open a [new issue ticket](https://github.com/burianvlastimil/lightshot-pr
 
 Donations are possible via my PayPal account issued on the same email address as mentioned above.
 
-Or you can directly scan the below QR code with your smartphone.
+Or you can directly scan the below QR code with PayPal app on your smartphone.
 
 ![My PayPal QR Code](https://www.vlastimilburian.cz/images/paypal-my-qrcode.png?)
