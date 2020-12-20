@@ -6,7 +6,7 @@
 #|                     Copyright: 2018-2020 Vlastimil Burian                    |
 #|                      M@il: info[..]vlastimilburian[..]cz                     |
 #|                               License: GPL 3.0                               |
-#|                                 Version: 5.2                                 |
+#|                                 Version: 5.3                                 |
 #|                         GitHub: https://git.io/fx2US                         |
 #+------------------------------------------------------------------------------+
 
@@ -73,7 +73,7 @@ fi
 tput_capability_test ()
 {
     [ -n "$tput_cmd_set_fg_color" ] && [ -n "$tput_number_of_colors" ] && [ -n "$tput_bold" ] && [ -n "$tput_reset" ] &&
-    { [ "$tput_number_of_colors" -ge 8 ] && printf '%s' "$tput_bold" && $tput_cmd_set_fg_color 1; } > /dev/null 2>&1
+    [ "$tput_number_of_colors" -ge 8 ] && { $tput_cmd_set_fg_color 1 && printf '%s' "$tput_bold$tput_reset"; } > /dev/null 2>&1
 }
 
 if tput_capability_test; then
@@ -96,20 +96,34 @@ fi
 
 is_integer ()
 {
-    if [ $# -ne 1 ]; then
+    if [ "$#" -ne 1 ]; then
         printf >&2 '%s\n' \
             "${color_yellow}is_integer() input check$tput_reset" \
             'Single argument was not passed to the function!' \
             'One variable to test expected.'
         exit 1
     fi
-    case "${1#-}" in
-        (0)               return 0 ;;
-        (0*)              return 1 ;;
+    case "${1#[+-]}" in
         (*[!0123456789]*) return 1 ;;
         ('')              return 1 ;;
         (*)               return 0 ;;
     esac
+}
+
+is_exit_code ()
+{
+    if [ "$#" -ne 1 ]; then
+        printf >&2 '%s\n' \
+            "${color_yellow}is_exit_code() input check$tput_reset" \
+            'Single argument was not passed to the function!' \
+            'One variable to test expected.'
+        exit 1
+    fi
+    is_integer "$1" &&
+    case "$1" in
+        ([+-]*) return 1 ;;
+    esac &&
+    [ "$1" -le 255 ]
 }
 
 dump_args ()
@@ -118,7 +132,7 @@ dump_args ()
     printf '%s\n' \
         "${color_yellow}dump_args()$tput_reset" \
         "$color_white$# arguments inspected$punct$tput_reset"
-    while [ $# -gt 0 ]; do
+    while [ "$#" -gt 0 ]; do
         printf "[$color_white%d$tput_reset]: '%s' " "$i" "$1"
         if [ -z "$1" ]; then
             printf '%s' "(${color_blue}empty$tput_reset)"
@@ -137,7 +151,7 @@ dump_args ()
 
 print_error ()
 {
-    if ! { [ $# -eq 2 ] && [ -n "$1" ] && [ -n "$2" ]; } then
+    if ! { [ "$#" -eq 2 ] && [ -n "$1" ] && [ -n "$2" ]; } then
         dump_args "$@"
         printf '%b\n' \
             "${color_yellow}print_error() input check$tput_reset" \
@@ -154,9 +168,8 @@ print_error ()
 
 print_error__exit ()
 {
-    if ! { [ $# -eq 2 ] && [ -n "$1" ] && [ -n "$2" ]; } &&
-       ! { [ $# -eq 3 ] && [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ] &&
-            is_integer "$3" && [ "$3" -ge 1 ] && [ "$3" -le 125 ]; } then
+    if ! { [ "$#" -eq 2 ] && [ -n "$1" ] && [ -n "$2" ]; } &&
+       ! { [ "$#" -eq 3 ] && [ -n "$1" ] && [ -n "$2" ] && is_exit_code "$3" && [ "$3" -ge 1 ]; } then
         dump_args "$@"
         # shellcheck disable=SC2016
         printf '%b\n' \
@@ -164,18 +177,17 @@ print_error__exit ()
             'Wrong number, type or empty arguments have been passed to the function.' \
             "Expected the following ${color_red}strings$tput_reset: $color_cyan\$1$tput_reset = error heading, $color_cyan\$2$tput_reset = error message." \
             "Optionally, accepting a ${color_green}number$tput_reset: $color_cyan\$3$tput_reset = exit code; if not given 1 is used." \
-            'Acceptable exit code range: anywhere between <1;125>; 1 is the default.'
+            'Acceptable exit code range: anywhere between <1;255>; 1 is the default.'
         exit 1
     fi
-    [ $# -eq 3 ] && exit_code=$3 || exit_code=1
     print_error "$1" "$2"
-    exit "$exit_code"
+    exit "${3:-1}"
 } >&2
 
 # shellcheck disable=SC2120
 is_user_root ()
 {
-    if [ $# -ne 0 ]; then
+    if [ "$#" -ne 0 ]; then
         dump_args "$@"
         print_error__exit 'is_user_root() input check' "Some arguments have been passed to the function! No arguments expected."
     fi
@@ -189,10 +201,10 @@ fi
 
 check_for_requirements ()
 {
-    if [ $# -eq 0 ]; then
+    if [ "$#" -eq 0 ]; then
         print_error__exit 'check_for_requirements() input check' "No arguments passed to the function! At least one program name expected."
     fi
-    while [ $# -gt 0 ]; do
+    while [ "$#" -gt 0 ]; do
         if [ -z "$1" ]; then
             dump_args "$@"
             print_error__exit 'check_for_requirements() input check' "Empty argument passed to the function!"
@@ -204,20 +216,20 @@ check_for_requirements ()
     done
 }
 
-# `pgrep`   program is from `procps`  package (on Ubuntu in `main`)     - installed by default: Yes, usually
+# `pgrep`   program is from `procps`  package (on Ubuntu in `main`)     - installed by default: Yes (usually)
 # `xdotool` program is from `xdotool` package (on Ubuntu in `universe`) - installed by default: No
 check_for_requirements pgrep xdotool
 
 print_usage_and_exit ()
 {
-    if ! { [ $# -eq 1 ] && is_integer "$1"; } then
+    if ! { [ "$#" -eq 1 ] && is_exit_code "$1"; } then
         dump_args "$@"
         print_error__exit 'print_usage_and_exit() input check' "${color_green}Number$tput_reset required: $color_cyan\$1$tput_reset = exit code from the script."
     fi
     [ "$1" -ne 0 ] && exec >&2
 cat << EOF
 Script  : Lightshot print screen Linux handler
-Version : 5.2
+Version : 5.3
 GitHub  : https://git.io/fx2US
 -------------------------------------------------------------------
 Description: This script works with XDOTOOL to trigger Print Screen
@@ -244,14 +256,14 @@ while getopts ":hk:" cli_option; do
 done
 shift $((OPTIND - 1))
 
-if [ $# -ne 0 ]; then
+if [ "$#" -ne 0 ]; then
     dump_args "$@"
     print_usage_and_exit 1
 fi
 
 get_process_id ()
 {
-    if ! { [ $# -eq 1 ] && [ -n "$1" ]; } then
+    if ! { [ "$#" -eq 1 ] && [ -n "$1" ]; } then
         dump_args "$@"
         print_error__exit 'get_process_id() input check' "${color_red}String$tput_reset required: $color_cyan\$1$tput_reset = process name to find id to."
     fi
@@ -260,9 +272,9 @@ get_process_id ()
 
 get_window_id ()
 {
-    if ! { [ $# -eq 2 ] && is_integer "$1" && [ -n "$2" ]; } then
+    if ! { [ "$#" -eq 2 ] && is_integer "$1" && [ -n "$2" ]; } then
         dump_args "$@"
-        print_error__exit 'get_window_id() input check' "Two arguments were not passed to the function! Expected a process id (integer) and a window name (string)."
+        print_error__exit 'get_window_id() input check' "Two arguments were not passed to the function! Expected a process id (${color_green}integer$tput_reset) and a window name (${color_red}string$tput_reset)."
     fi
     #--all  : Require all conditions to be met.
     #--limit: Stop searching after finding N matching windows.
@@ -277,18 +289,18 @@ lightshot_process_id=$(get_process_id Lightshot.exe)
 
 if ! is_integer "$lightshot_process_id"; then
     # shellcheck disable=SC2016
-    print_error__exit 'is_integer $(get_process_id Lightshot.exe)' "Lightshot process is not running / get_process_id returned an empty string."
+    print_error__exit 'is_integer $(get_process_id Lightshot.exe)' "Lightshot process is not running / get_process_id returned an ${color_blue}empty value$tput_reset."
 fi
 
 lightshot_window_id=$(get_window_id "$lightshot_process_id" Lightshot)
 
 if ! is_integer "$lightshot_window_id"; then
     # shellcheck disable=SC2016
-    print_error__exit 'is_integer $lightshot_window_id' "Lightshot process was found / is running but its window was not found for some reason."
+    print_error__exit 'is_integer $lightshot_window_id' "Lightshot process was found (is running) but its window was not found for some reason / get_window_id returned an ${color_blue}empty$tput_reset result."
 fi
 
 if xdotool key --window "$lightshot_window_id" "$hotkey"; then
-    printf '%s\n' "${color_green}Success$tput_reset, the hotkey = $color_blue$hotkey$tput_reset was successfully sent to Lightshot window!"
+    printf '%s\n' "Success, the hotkey = $color_blue$hotkey$tput_reset was successfully sent to Lightshot window!"
     printf '%s\n' "However, if Lightshot did not appear, you probably sent a bad hotkey.."
 else
     print_error__exit "xdotool key --window $lightshot_window_id $hotkey" "The send-hotkey command encountered an error."
