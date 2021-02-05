@@ -80,7 +80,7 @@ There is none. This script however launches the Lightshot print screen editor di
 
 ## Screenshot from Linux Mint 19.3 Cinnamon
 
-![Screenshot from Linux Mint 19.3](https://vlastimilburian.cz/public/github_images/lightshot-linux-mint-19.png)
+![Screenshot from Linux Mint 19.3](https://www.vlastimilburian.cz/github_images/lightshot-linux-mint-19.png)
 
 ***
 
