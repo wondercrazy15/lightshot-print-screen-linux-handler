@@ -3,10 +3,10 @@
 #+------------------------------------------------------------------------------+
 #|                     Lightshot print screen Linux handler                     |
 #|                         Language: POSIX shell script                         |
-#|                     Copyright: 2018-2020 Vlastimil Burian                    |
+#|                     Copyright: 2018-2021 Vlastimil Burian                    |
 #|                      M@il: info[..]vlastimilburian[..]cz                     |
 #|                               License: GPL 3.0                               |
-#|                                 Version: 5.3                                 |
+#|                                 Version: 5.4                                 |
 #|                         GitHub: https://git.io/fx2US                         |
 #+------------------------------------------------------------------------------+
 
@@ -52,22 +52,20 @@ tput_setup_none ()
     tput_reset=
 }
 
+tput_setup_none
+
 if command -v tput > /dev/null 2>&1; then
 
     if tput setaf > /dev/null 2>&1; then
 
-        if ! tput_setup_nix; then tput_setup_none; fi
+        tput_setup_nix || tput_setup_none
 
     elif tput AF > /dev/null 2>&1; then
 
-        if ! tput_setup_bsd; then tput_setup_none; fi
+        tput_setup_bsd || tput_setup_none
 
-    else
-        tput_setup_none
     fi
 
-else
-    tput_setup_none
 fi
 
 tput_capability_test ()
@@ -119,11 +117,10 @@ is_exit_code ()
             'One variable to test expected.'
         exit 1
     fi
-    is_integer "$1" &&
     case "$1" in
         ([+-]*) return 1 ;;
-    esac &&
-    [ "$1" -le 255 ]
+    esac
+    is_integer "$1" && [ "$1" -le 255 ]
 }
 
 dump_args ()
@@ -229,7 +226,7 @@ print_usage_and_exit ()
     [ "$1" -ne 0 ] && exec >&2
 cat << EOF
 Script  : Lightshot print screen Linux handler
-Version : 5.3
+Version : 5.4
 GitHub  : https://git.io/fx2US
 -------------------------------------------------------------------
 Description: This script works with XDOTOOL to trigger Print Screen
@@ -296,7 +293,7 @@ lightshot_window_id=$(get_window_id "$lightshot_process_id" Lightshot)
 
 if ! is_integer "$lightshot_window_id"; then
     # shellcheck disable=SC2016
-    print_error__exit 'is_integer $lightshot_window_id' "Lightshot process was found (is running) but its window was not found for some reason / get_window_id returned an ${color_blue}empty$tput_reset result."
+    print_error__exit 'is_integer $lightshot_window_id' "Lightshot process was found (is running) but its window was not found for some reason / get_window_id returned an ${color_blue}empty value$tput_reset."
 fi
 
 if xdotool key --window "$lightshot_window_id" "$hotkey"; then
